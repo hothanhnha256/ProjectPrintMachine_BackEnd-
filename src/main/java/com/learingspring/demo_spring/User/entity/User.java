@@ -24,12 +24,23 @@ public class User {
 
     @Column(name="username",unique = true,columnDefinition = "VARCHAR(255) COLLATE utf8mb4_unicode_ci")
     String username;
+
+    @Column(name="mssv",unique = true, nullable = false)
+    String mssv;
+
+    @Column(unique = true, nullable = false)
     String email;
     String password;
     String firstName;
     String lastName;
-
     LocalDate birthDate;
 
+    @Column(nullable = false)
+    Number balance;
+
     Roles role;
+
+    LocalDate createdAt;
+    LocalDate updatedAt;
+
 }

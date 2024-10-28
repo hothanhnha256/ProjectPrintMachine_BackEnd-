@@ -5,11 +5,11 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
+import com.learingspring.demo_spring.Auth.dto.response.IntrospectResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import com.learingspring.demo_spring.Auth.dto.request.AuthenticationRequest;
 import com.learingspring.demo_spring.Auth.dto.request.IntrospectRequest;

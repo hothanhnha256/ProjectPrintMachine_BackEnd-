@@ -10,7 +10,7 @@ import com.learingspring.demo_spring.Auth.dto.request.LogoutRequest;
 import com.learingspring.demo_spring.Auth.dto.request.RefreshRequest;
 import com.learingspring.demo_spring.exception.ApiResponse;
 import com.learingspring.demo_spring.Auth.service.AuthenticationResponse;
-import com.learingspring.demo_spring.Auth.service.IntrospectResponse;
+import com.learingspring.demo_spring.Auth.dto.response.IntrospectResponse;
 import com.learingspring.demo_spring.Auth.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
 

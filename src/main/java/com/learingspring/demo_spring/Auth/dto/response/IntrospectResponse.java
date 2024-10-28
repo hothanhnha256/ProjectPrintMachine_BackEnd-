@@ -1,4 +1,4 @@
-package com.learingspring.demo_spring.Auth.service;
+package com.learingspring.demo_spring.Auth.dto.response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
