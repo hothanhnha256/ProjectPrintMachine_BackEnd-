@@ -21,6 +21,8 @@ public enum ErrorCode {
     TOKEN_INVALID(1001, "Token is invalid", HttpStatus.UNAUTHORIZED),
     INVALID_EMAIL(1001, "Invalid email", HttpStatus.BAD_REQUEST),
     INVALID_HCMUT_EMAIL(1001, "Invalid Email, your email must be @hcmut.edu.vn", HttpStatus.BAD_REQUEST),
+    INVALID_FILE(1005, "Invalid file", HttpStatus.BAD_REQUEST),
+    FILE_NOT_FOUND(1006, "File not found", HttpStatus.NOT_FOUND),
     ;
 
     private int code;
