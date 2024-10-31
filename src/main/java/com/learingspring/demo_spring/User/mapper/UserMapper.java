@@ -12,6 +12,7 @@ import com.learingspring.demo_spring.User.entity.User;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
+
     User toUser(UserCreationRequest user);
 
     UserResponse toUserResponse(User user);

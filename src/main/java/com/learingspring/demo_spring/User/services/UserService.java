@@ -42,6 +42,7 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         user.setRole(Roles.USER);
+        user.setBalance(0);
 
         try {
             user = userRepository.save(user);
@@ -52,7 +53,27 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
-    @PostAuthorize("returnObject.username==authentication.name")
+    @PreAuthorize("hasRole('ADMIN')")
+    public UserResponse createAdmin(UserCreationRequest request) {
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new AppException(ErrorCode.USER_EXISTED);
+        }
+        User user = userMapper.toUser(request);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        user.setRole(Roles.ADMIN);
+        user.setBalance(0);
+
+        try {
+            user = userRepository.save(user);
+        } catch (DataIntegrityViolationException exception) {
+            throw new AppException(ErrorCode.USER_EXISTED);
+        }
+        log.info("User created: {}", user);
+        return userMapper.toUserResponse(user);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     public UserResponse getUser(String id) {
 
         log.info("inside getUser method");
@@ -78,6 +99,7 @@ public class UserService {
         return userMapper.toUserResponse(userRepository.save(userToUpdate));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public UserResponse deleteUser(String id) {
         User userToDelete = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_INVALID));
         return userMapper.toUserResponse(userToDelete);

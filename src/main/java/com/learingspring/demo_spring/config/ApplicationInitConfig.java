@@ -1,5 +1,8 @@
 package com.learingspring.demo_spring.config;
 
+import com.learingspring.demo_spring.PriceSetting.entity.Price;
+import com.learingspring.demo_spring.PriceSetting.repository.PriceSettingRepository;
+import com.learingspring.demo_spring.enums.ColorType;
 import com.learingspring.demo_spring.enums.Roles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
@@ -16,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+
+import java.time.LocalDate;
 
 @Configuration
 @RequiredArgsConstructor
@@ -37,7 +42,7 @@ public class ApplicationInitConfig {
             prefix = "spring",
             value = "datasource.driver-class-name",
             havingValue = "com.mysql.cj.jdbc.Driver")
-    ApplicationRunner applicationRunner(UserRepository userRepository) {
+    ApplicationRunner applicationRunner(UserRepository userRepository, PriceSettingRepository priceSettingRepository) {
         return args -> {
             if (userRepository.findByUsername(ADMIN_USER_NAME).isEmpty()) {
 
@@ -52,6 +57,25 @@ public class ApplicationInitConfig {
 
                 userRepository.save(user);
                 log.warn("admin user has been created with default password: admin, please change it");
+            }
+            if(!priceSettingRepository.existsByColorType(ColorType.COLOR.toString())){
+                Price price = Price.builder()
+                        .colorType(ColorType.COLOR.toString())
+                        .pricePage(1000)
+                        .dateUpdate(LocalDate.now())
+                        .build();
+                priceSettingRepository.save(price);
+                log.warn("price has been created with default, please change it");
+            }
+
+            if(!priceSettingRepository.existsByColorType(ColorType.BLACK_WHITE.toString())){
+                Price price = Price.builder()
+                        .colorType(ColorType.BLACK_WHITE.toString())
+                        .pricePage(1000)
+                        .dateUpdate(LocalDate.now())
+                        .build();
+                priceSettingRepository.save(price);
+                log.warn("price has been created with default, please change it");
             }
             log.info("Application initialization completed .....");
         };

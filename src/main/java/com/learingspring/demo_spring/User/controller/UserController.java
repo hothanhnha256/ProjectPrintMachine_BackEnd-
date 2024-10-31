@@ -16,6 +16,7 @@ import com.learingspring.demo_spring.User.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
+@RequestMapping("/users")
 @Slf4j
 public class UserController {
     private final UserService userService;
@@ -24,7 +25,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/users")
+    @PostMapping()
     ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest user) {
         ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
         apiResponse.setCode(200);
@@ -32,6 +33,13 @@ public class UserController {
         return apiResponse;
     }
 
+    @PostMapping("/createAdmin")
+    ApiResponse<UserResponse> createAdmin(@RequestBody @Valid UserCreationRequest user) {
+        ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
+        apiResponse.setCode(200);
+        apiResponse.setResult(userService.createAdmin(user));
+        return apiResponse;
+    }
     @GetMapping("/{userId}")
     ApiResponse<UserResponse> getUser(@PathVariable("userId") String userId) {
 
@@ -49,7 +57,7 @@ public class UserController {
         return apiResponse;
     }
 
-    @GetMapping("/users")
+    @GetMapping()
     ApiResponse<List<UserResponse>> getAllUsers() {
 
         log.info("getAllUsers");

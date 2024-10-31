@@ -18,9 +18,12 @@ public class UserResponse {
     String id;
     String username;
     String email;
-    //    String password;
     String firstName;
     String lastName;
     LocalDate birthDate;
     Roles role;
+    Number balance;
+    String mssv;
+    LocalDate createdAt;
+    LocalDate updatedAt;
 }
