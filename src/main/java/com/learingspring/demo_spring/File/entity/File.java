@@ -21,12 +21,10 @@ public class File {
     String id;
 
     @Lob
-    @Column(name="file_data",columnDefinition = "LONGBLOB")
-    byte[] fileData;
+    @Column(name="file_size",columnDefinition = "LONGBLOB")
+    byte[] fileSize;
 
     String filetype;
-
-    Number pageNum;
 
     String name;
 
