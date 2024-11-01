@@ -1,9 +1,9 @@
 package com.learingspring.demo_spring.User.controller;
 
-import java.util.List;
 
 import jakarta.validation.Valid;
 
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,12 +43,9 @@ public class UserController {
     @GetMapping("/{userId}")
     ApiResponse<UserResponse> getUser(@PathVariable("userId") String userId) {
 
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        log.info("Username: {}", authentication.getName());
-        authentication
-                .getAuthorities()
-                .forEach(grantedAuthority -> log.info("GrantedAuthority: {}", grantedAuthority.getAuthority()));
+//      var authentication = SecurityContextHolder.getContext().getAuthentication();
+//        log.info("Username: {}", authentication.getName());
+//        authentication.getAuthorities().forEach(grantedAuthority -> log.info("GrantedAuthority: {}", grantedAuthority.getAuthority()));
 
         ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
         apiResponse.setCode(200);
@@ -58,7 +55,9 @@ public class UserController {
     }
 
     @GetMapping()
-    ApiResponse<List<UserResponse>> getAllUsers() {
+    ApiResponse<Page<UserResponse>> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size)  {
 
         log.info("getAllUsers");
 
@@ -69,9 +68,9 @@ public class UserController {
                 .getAuthorities()
                 .forEach(grantedAuthority -> log.info("GrantedAuthority: {}", grantedAuthority.getAuthority()));
 
-        ApiResponse<List<UserResponse>> apiResponse = new ApiResponse<>();
+        ApiResponse<Page<UserResponse>> apiResponse = new ApiResponse<>();
         apiResponse.setCode(200);
-        apiResponse.setResult(userService.getAllUsers());
+        apiResponse.setResult(userService.getAllUsers(page,size));
         return apiResponse;
     }
 

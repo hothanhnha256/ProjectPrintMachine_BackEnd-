@@ -4,6 +4,9 @@ import java.util.List;
 
 import com.learingspring.demo_spring.enums.Roles;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -84,11 +87,9 @@ public class UserService {
     }
 
     @PreAuthorize("hasRole('ADMIN')") // phân quyền theo ROLE
-    public List<UserResponse> getAllUsers() {
-
-        log.info("inside getAllUsers");
-
-        return userRepository.findAll().stream().map(userMapper::toUserResponse).toList();
+    public Page<UserResponse> getAllUsers(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return userRepository.findAll(pageable).map(userMapper::toUserResponse);
     }
 
     public UserResponse updateUser(String userID, UserUpdateRequest user) {

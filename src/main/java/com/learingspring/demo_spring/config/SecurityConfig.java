@@ -30,7 +30,9 @@ public class SecurityConfig {
     private static final String[] PUBLIC_ENDPOINTS = {
         //This is for public url
             "/users",
-            "/auth/token"
+            "/auth/token",
+            "/reportWarranty",
+            "/reportWarranty/**"
     };
 
     @Bean
