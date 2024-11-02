@@ -4,6 +4,7 @@ import com.learingspring.demo_spring.File.dto.request.FileAdjustRequest;
 import com.learingspring.demo_spring.File.dto.response.FileResponse;
 import com.learingspring.demo_spring.File.entity.File;
 import com.learingspring.demo_spring.File.repository.FileRepository;
+import com.learingspring.demo_spring.User.entity.User;
 import com.learingspring.demo_spring.User.repository.UserRepository;
 import com.learingspring.demo_spring.exception.AppException;
 import com.learingspring.demo_spring.exception.ErrorCode;
@@ -29,19 +30,32 @@ public class FileService {
     FileRepository fileRepository;
     UserRepository userRepository;
 
+    private static final long MAX_STORAGE_LIMIT = (long) 1024 * 1024 * 1024;
+
+
     public FileResponse uploadFile(MultipartFile multipartFile) throws IOException {
         log.info("Inside uploadFile method");
 
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
 
+        var sizeFile = multipartFile.getBytes().length;
+        User user = userRepository.findByUsername(name)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_INVALID));
+        if(user.getCapacity() + sizeFile > MAX_STORAGE_LIMIT){
+            throw new AppException(ErrorCode.STORAGE_LIMIT_EXCEEDED);
+        }
+
+
         File file = new File();
-        file.setFileSize(multipartFile.getBytes());
+        file.setFileData(multipartFile.getBytes());
         file.setFiletype(multipartFile.getContentType());
         file.setName(multipartFile.getOriginalFilename());
-        file.setUser(userRepository.findByUsername(name)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_INVALID)));
+        file.setUser(user);
         file.setUploadDate(LocalDate.now());
+
+
+
 
         file = fileRepository.save(file);
 
@@ -54,6 +68,7 @@ public class FileService {
         File file = fileRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.FILE_NOT_FOUND));
         return toFileResponse(file);
     }
+
 
 
     public List<FileResponse> getAllFilesByStudent(String studentId) {
@@ -95,7 +110,7 @@ public class FileService {
                 .id(file.getId())
                 .name(file.getName())
                 .username(file.getUser().getUsername())
-                .fileSize(file.getFileSize().length)
+                .fileSize(file.getFileData().length)
                 .filetype(file.getFiletype())
                 .uploadDate(file.getUploadDate())
                 .build();
