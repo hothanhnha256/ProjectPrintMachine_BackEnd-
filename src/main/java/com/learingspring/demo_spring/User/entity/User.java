@@ -3,6 +3,7 @@ package com.learingspring.demo_spring.User.entity;
 import java.time.LocalDate;
 import java.util.Set;
 
+import com.learingspring.demo_spring.Wallet.enity.Wallet;
 import com.learingspring.demo_spring.customAnotation.email.EmailConstraint;
 import com.learingspring.demo_spring.enums.Roles;
 import jakarta.persistence.*;
@@ -38,9 +39,24 @@ public class User {
     @Column(nullable = false)
     Number balance;
 
+    @Column(nullable = false)
+    long capacity;
+
     Roles role;
 
     LocalDate createdAt;
     LocalDate updatedAt;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    Wallet wallet;
+
+    @PrePersist
+    public void prePersist() {
+        if (this.wallet == null) {
+            this.wallet = new Wallet();
+            this.wallet.setUser(this);
+            this.wallet.setBalance(0); // Initialize wallet balance
+            this.wallet.setUpdatedAt(LocalDate.now());
+        }
+    }
 }
