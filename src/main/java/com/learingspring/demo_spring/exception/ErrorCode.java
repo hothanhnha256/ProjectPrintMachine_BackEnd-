@@ -23,6 +23,10 @@ public enum ErrorCode {
     INVALID_HCMUT_EMAIL(1001, "Invalid Email, your email must be @hcmut.edu.vn", HttpStatus.BAD_REQUEST),
     INVALID_FILE(1005, "Invalid file", HttpStatus.BAD_REQUEST),
     FILE_NOT_FOUND(1006, "File not found", HttpStatus.NOT_FOUND),
+    STORAGE_LIMIT_EXCEEDED(1007, "Storage limit exceeded", HttpStatus.BAD_REQUEST),
+    INVALID_WALLET(1008, "Invalid wallet", HttpStatus.BAD_REQUEST),
+    INSUFFICIENT_BALANCE(1009, "Insufficient balance", HttpStatus.BAD_REQUEST),
+    WALLET_EXISTED(1010, "Wallet already existed", HttpStatus.BAD_REQUEST),
     ;
 
     private int code;

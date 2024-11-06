@@ -1,6 +1,5 @@
 package com.learingspring.demo_spring.Wallet.repository;
 
-import com.learingspring.demo_spring.User.entity.User;
 import com.learingspring.demo_spring.Wallet.enity.Wallet;
 import org.springframework.data.jpa.repository.JpaRepository;
 

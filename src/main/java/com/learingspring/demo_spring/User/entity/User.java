@@ -37,9 +37,6 @@ public class User {
     LocalDate birthDate;
 
     @Column(nullable = false)
-    Number balance;
-
-    @Column(nullable = false)
     long capacity;
 
     Roles role;
@@ -47,16 +44,8 @@ public class User {
     LocalDate createdAt;
     LocalDate updatedAt;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    Wallet wallet;
 
-    @PrePersist
-    public void prePersist() {
-        if (this.wallet == null) {
-            this.wallet = new Wallet();
-            this.wallet.setUser(this);
-            this.wallet.setBalance(0); // Initialize wallet balance
-            this.wallet.setUpdatedAt(LocalDate.now());
-        }
-    }
+    @OneToOne
+    @JoinColumn(name = "wallet_id", referencedColumnName = "id")
+    Wallet wallet;
 }

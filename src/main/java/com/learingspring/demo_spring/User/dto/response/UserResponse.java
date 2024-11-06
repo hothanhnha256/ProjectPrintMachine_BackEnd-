@@ -22,7 +22,6 @@ public class UserResponse {
     String lastName;
     LocalDate birthDate;
     Roles role;
-    Number balance;
     String mssv;
     LocalDate createdAt;
     LocalDate updatedAt;

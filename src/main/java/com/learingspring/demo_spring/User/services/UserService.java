@@ -1,7 +1,5 @@
 package com.learingspring.demo_spring.User.services;
 
-import java.util.List;
-
 import com.learingspring.demo_spring.enums.Roles;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -45,8 +43,6 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         user.setRole(Roles.USER);
-        user.setBalance(0);
-
         try {
             user = userRepository.save(user);
         } catch (DataIntegrityViolationException exception) {
@@ -65,7 +61,6 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         user.setRole(Roles.ADMIN);
-        user.setBalance(0);
 
         try {
             user = userRepository.save(user);

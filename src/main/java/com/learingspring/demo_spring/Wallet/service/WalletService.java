@@ -17,6 +17,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+
 @Slf4j
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -40,6 +42,7 @@ public class WalletService {
         }
 
         Wallet wallet = Wallet.builder()
+                .updatedAt(LocalDate.now())
                 .balance(0)
                 .build();
 
@@ -60,13 +63,14 @@ public class WalletService {
                 .orElseThrow(() -> new AppException(ErrorCode.INVALID_WALLET));
 
         wallet.setBalance(wallet.getBalance().doubleValue() + amount.doubleValue());
+        wallet.setUpdatedAt(LocalDate.now());
 
         wallet = walletRepository.save(wallet);
 
         return walletMapper.toWalletResponse(wallet);
     }
 
-    @PostAuthorize("returnObject.username == authentication.name")
+//    @PostAuthorize("returnObject.username == authentication.name")
     public WalletResponse getMyBalance() {
         log.info("getting wallet balance");
 

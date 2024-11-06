@@ -22,5 +22,4 @@ public class UserUpdateRequest {
     String lastName;
     @DobConstraint(min = 10, message = "USER_DOB_INVALID")
     LocalDate birthDate;
-    Number balance;
 }

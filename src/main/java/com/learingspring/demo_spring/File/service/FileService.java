@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,8 +41,12 @@ public class FileService {
         String name = context.getAuthentication().getName();
 
         var sizeFile = multipartFile.getBytes().length;
+
+
         User user = userRepository.findByUsername(name)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_INVALID));
+
+
         if(user.getCapacity() + sizeFile > MAX_STORAGE_LIMIT){
             throw new AppException(ErrorCode.STORAGE_LIMIT_EXCEEDED);
         }
@@ -53,7 +58,9 @@ public class FileService {
         file.setName(multipartFile.getOriginalFilename());
         file.setUser(user);
         file.setUploadDate(LocalDate.now());
+        user.setCapacity(user.getCapacity() + sizeFile);
 
+        userRepository.save(user);
 
 
 
@@ -71,14 +78,17 @@ public class FileService {
 
 
 
-    public List<FileResponse> getAllFilesByStudent(String studentId) {
+    public List<FileResponse> getAllFilesByStudent() {
         log.info("Inside getAllFilesByStudent method");
 
-        List<File> files = fileRepository.findAllByUserId(studentId);
-        if (files.isEmpty()) {
-            throw new AppException(ErrorCode.FILE_NOT_FOUND);
-        }
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
 
+
+        User user = userRepository.findByUsername(name)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_INVALID));
+
+        List<File> files = fileRepository.findAllByUserId(user.getId());
         return files.stream()
                 .map(this::toFileResponse)
                 .collect(Collectors.toList());
@@ -87,7 +97,8 @@ public class FileService {
     public FileResponse deleteFile(String id) {
         log.info("Inside deleteFile method");
 
-        File file = fileRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.FILE_NOT_FOUND));
+        File file = fileRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.FILE_NOT_FOUND));
         fileRepository.delete(file);
 
         return toFileResponse(file);

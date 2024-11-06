@@ -21,7 +21,7 @@ public class FileController {
 
 
 
-    @GetMapping("/{id}")
+    @GetMapping("/get-file/{id}")
     public ApiResponse<FileResponse> getFile(@PathVariable("id") String id) {
         ApiResponse<FileResponse> apiResponse = new ApiResponse<>();
         apiResponse.setCode(200);
@@ -29,16 +29,17 @@ public class FileController {
         return apiResponse;
     }
 
-    @GetMapping("/get-all/{id}")
-    public ApiResponse<List<FileResponse>> getAllFiles(@PathVariable("id") String id) {
+    @GetMapping("/get-all")
+    public ApiResponse<List<FileResponse>> getAllFilesEachUser() {
         return ApiResponse.<List<FileResponse>>builder()
                 .code(200)
-                .result(fileService.getAllFilesByStudent(id))
+                .result(fileService.getAllFilesByStudent())
                 .build();
     }
 
     @PostMapping("/upload")
-    public ApiResponse<FileResponse> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
+    public ApiResponse<FileResponse> uploadFile(@RequestParam("file") MultipartFile file)
+            throws IOException {
         ApiResponse<FileResponse> apiResponse = new ApiResponse<>();
         apiResponse.setCode(200);
         apiResponse.setResult(fileService.uploadFile(file));
@@ -46,7 +47,8 @@ public class FileController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<FileResponse> adjustFile(@PathVariable("id") String id, @RequestBody FileAdjustRequest request) {
+    public ApiResponse<FileResponse> adjustFile(@PathVariable("id") String id,
+                                                @RequestBody FileAdjustRequest request) {
         ApiResponse<FileResponse> apiResponse = new ApiResponse<>();
         apiResponse.setCode(200);
         apiResponse.setResult(fileService.adjustFile(id, request));
