@@ -23,6 +23,11 @@ public enum ErrorCode {
     INVALID_HCMUT_EMAIL(1001, "Invalid Email, your email must be @hcmut.edu.vn", HttpStatus.BAD_REQUEST),
     INVALID_FILE(1005, "Invalid file", HttpStatus.BAD_REQUEST),
     FILE_NOT_FOUND(1006, "File not found", HttpStatus.NOT_FOUND),
+
+
+    //For setting Price
+    ATTRIBUTE_ALREADY_EXITS(1007, "Price for this attribute is already exits", HttpStatus.BAD_REQUEST),
+    ATTRIBUTE_NOT_EXITS(1007, "Price for this attribute is not exits", HttpStatus.BAD_REQUEST),
     ;
 
     private int code;

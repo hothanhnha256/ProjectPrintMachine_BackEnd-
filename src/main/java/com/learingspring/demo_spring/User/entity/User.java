@@ -38,6 +38,8 @@ public class User {
     @Column(nullable = false)
     Number balance;
 
+    Long capacity;
+
     Roles role;
 
     LocalDate createdAt;

@@ -1,10 +1,10 @@
-package com.learingspring.demo_spring.PriceSetting.entity;
+package com.learingspring.demo_spring.MaterialStorage.entity;
 
 import com.learingspring.demo_spring.enums.ColorType;
+import com.learingspring.demo_spring.enums.MaterialType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -18,22 +18,16 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Price {
+public class MaterialStorage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     @Enumerated(EnumType.STRING)
-    ColorType colorType; //BLACK_WHITE AND COLOR
+    @Column(unique = true)
+    MaterialType name;
 
     @Min(0)
-    @Max(5)
-    Number pageSize; // x is Ax
-
-    Boolean faceType; //0 is 1 face, 1 is 2 faces
-
-    @Min(0)
-    Number pricePage;
-
+    Number value;
     LocalDate dateUpdate;
 }

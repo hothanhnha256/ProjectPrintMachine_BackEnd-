@@ -51,13 +51,45 @@ public class PriceSettingService {
     PriceSettingMapper priceSettingMapper;
 
     public List<PriceSettingResponse> getAllPriceSettings() {
+        log.info(
+                priceSettingRepository.findAll().toString()
+        );
         return priceSettingRepository.findAll().stream().map(priceSettingMapper::toPriceResponse).toList();
     }
+
     public PriceSettingResponse updatePriceSettings(PriceSettingRequest priceSettingRequest) {
-        Price price =priceSettingRepository.findByColorType(priceSettingRequest.getColorType());
+        if(Boolean.FALSE.equals(checkExits(priceSettingRequest)))
+        {
+            throw new AppException(ErrorCode.ATTRIBUTE_NOT_EXITS);
+        }
+
+        Price price =priceSettingRepository.findPriceByColorTypeAndFaceTypeAndPageSize(
+                priceSettingRequest.getColorType(),
+                priceSettingRequest.getFaceType(),
+                priceSettingRequest.getPageSize()
+        );
         price.setPricePage(priceSettingRequest.getPricePage());
         price.setDateUpdate(LocalDate.now());
         priceSettingRepository.save(price);
         return priceSettingMapper.toPriceResponse(price);
     }
+
+    public PriceSettingResponse createPriceSettings(PriceSettingRequest priceSettingRequest) {
+        if(Boolean.TRUE.equals(checkExits(priceSettingRequest)))
+        {
+            throw new AppException(ErrorCode.ATTRIBUTE_ALREADY_EXITS);
+        }
+
+        Price price= priceSettingMapper.toPrice(priceSettingRequest);
+        price.setDateUpdate(LocalDate.now());
+        priceSettingRepository.save(price);
+        return priceSettingMapper.toPriceResponse(price);
+    }
+    private Boolean checkExits(PriceSettingRequest priceSettingRequest){
+        return priceSettingRepository.existsByColorTypeAndFaceTypeAndPageSize(
+                priceSettingRequest.getColorType(),
+                priceSettingRequest.getFaceType(),
+                priceSettingRequest.getPageSize());
+    }
+
 }

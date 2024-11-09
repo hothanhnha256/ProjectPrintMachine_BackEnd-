@@ -36,4 +36,12 @@ public class PriceSettingController {
                 .build();
     }
 
+    @PostMapping("/createPrice")
+    ApiResponse<PriceSettingResponse> createPriceSetting(@RequestBody PriceSettingRequest priceSettingRequest){
+        return ApiResponse.<PriceSettingResponse>builder()
+                .code(200)
+                .result(priceSettingService.createPriceSettings(priceSettingRequest))
+                .build();
+    }
+
 }

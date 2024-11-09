@@ -58,9 +58,13 @@ public class ApplicationInitConfig {
                 userRepository.save(user);
                 log.warn("admin user has been created with default password: admin, please change it");
             }
-            if(!priceSettingRepository.existsByColorType(ColorType.COLOR.toString())){
+            if(!priceSettingRepository.existsByColorTypeAndFaceTypeAndPageSize(
+                    ColorType.COLOR,true,4
+            )){
                 Price price = Price.builder()
-                        .colorType(ColorType.COLOR.toString())
+                        .colorType(ColorType.COLOR)
+                        .pageSize(4)
+                        .faceType(true)
                         .pricePage(1000)
                         .dateUpdate(LocalDate.now())
                         .build();
@@ -68,9 +72,39 @@ public class ApplicationInitConfig {
                 log.warn("price has been created with default, please change it");
             }
 
-            if(!priceSettingRepository.existsByColorType(ColorType.BLACK_WHITE.toString())){
+            if(!priceSettingRepository.existsByColorTypeAndFaceTypeAndPageSize(
+                    ColorType.COLOR,false,4
+            )){
                 Price price = Price.builder()
-                        .colorType(ColorType.BLACK_WHITE.toString())
+                        .colorType(ColorType.COLOR)
+                        .faceType(false)
+                        .pageSize(4)
+                        .pricePage(1000)
+                        .dateUpdate(LocalDate.now())
+                        .build();
+                priceSettingRepository.save(price);
+                log.warn("price has been created with default, please change it");
+            }
+            if(!priceSettingRepository.existsByColorTypeAndFaceTypeAndPageSize(
+                    ColorType.BLACK_WHITE,true,4
+            )){
+                Price price = Price.builder()
+                        .colorType(ColorType.BLACK_WHITE)
+                        .faceType(false)
+                        .pageSize(4)
+                        .pricePage(1000)
+                        .dateUpdate(LocalDate.now())
+                        .build();
+                priceSettingRepository.save(price);
+                log.warn("price has been created with default, please change it");
+            }
+            if(!priceSettingRepository.existsByColorTypeAndFaceTypeAndPageSize(
+                    ColorType.BLACK_WHITE,false,4
+            )){
+                Price price = Price.builder()
+                        .colorType(ColorType.BLACK_WHITE)
+                        .faceType(false)
+                        .pageSize(4)
                         .pricePage(1000)
                         .dateUpdate(LocalDate.now())
                         .build();

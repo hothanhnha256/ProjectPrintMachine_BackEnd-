@@ -106,6 +106,7 @@ public class UserService {
         return userMapper.toUserResponse(userToDelete);
     }
 
+
     @PostAuthorize("returnObject.username==authentication.name") // Recheck to auth
     public UserResponse getMyInfo() {
 

@@ -13,7 +13,12 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PriceSettingRequest {
 
-    String colorType; //BLACK_WHITE AND COLOR
+    ColorType colorType; //BLACK_WHITE AND COLOR
+
+    Number pageSize; // x is Ax
+
+    Boolean faceType; //0 is 1 face, 1 is 2 faces
+
     Number pricePage;
 
 

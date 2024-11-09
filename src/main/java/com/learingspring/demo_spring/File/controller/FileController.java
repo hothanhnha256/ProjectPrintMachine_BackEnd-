@@ -29,11 +29,11 @@ public class FileController {
         return apiResponse;
     }
 
-    @GetMapping("/get-all/{id}")
-    public ApiResponse<List<FileResponse>> getAllFiles(@PathVariable("id") String id) {
+    @GetMapping("/get-all/{studentId}")
+    public ApiResponse<List<FileResponse>> getAllFiles(@PathVariable("studentId") String studentId) {
         return ApiResponse.<List<FileResponse>>builder()
                 .code(200)
-                .result(fileService.getAllFilesByStudent(id))
+                .result(fileService.getAllFilesByStudent(studentId))
                 .build();
     }
 

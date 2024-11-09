@@ -11,7 +11,11 @@ import java.time.LocalDate;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PriceSettingResponse {
-    String colorType; //BLACK_WHITE AND COLOR
+    ColorType colorType; //BLACK_WHITE AND COLOR
+
+    Number pageSize; // x is Ax
+
+    Boolean faceType; //0 is 1 face, 1 is 2 faces
 
     Number pricePage;
 
