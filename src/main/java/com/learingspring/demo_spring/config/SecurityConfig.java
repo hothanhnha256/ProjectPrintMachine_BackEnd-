@@ -32,12 +32,15 @@ public class SecurityConfig {
             "/users",
             "/auth/token",
             "/reportWarranty",
-            "/reportWarranty/**"
+            "/reportWarranty/**",
+            "/printers/**"
     };
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(request -> request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS)
+                .permitAll()
+                .requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINTS)
                 .permitAll()
                 .anyRequest()
                 .authenticated());
