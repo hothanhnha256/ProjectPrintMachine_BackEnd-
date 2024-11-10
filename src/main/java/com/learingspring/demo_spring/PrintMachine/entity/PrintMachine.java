@@ -1,5 +1,6 @@
 package com.learingspring.demo_spring.PrintMachine.entity;
 
+import com.learingspring.demo_spring.Location.Entity.Location;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -19,6 +20,7 @@ import java.time.LocalDate;
 //                @Index(name="idx_id", columnList = "id")
 //        }
 )
+
 public class PrintMachine {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -27,12 +29,17 @@ public class PrintMachine {
     String manufacturer;
     String model;
     String description;
-    String address;
+
+    @ManyToOne
+    @JoinColumn(name = "locationId") // set name foreign key
+    Location address;
 
     //Status
     String inkStatus;
     Integer paperStatus;
     Integer capacity;
+    @JoinColumn(name = "printWaiting")
+    Integer printWaiting;
 
     //Warranty
     LocalDate warrantyDate;
@@ -40,4 +47,5 @@ public class PrintMachine {
 
     LocalDate createDate;
     LocalDate updateDate;
+
 }

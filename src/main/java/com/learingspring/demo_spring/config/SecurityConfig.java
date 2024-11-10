@@ -17,7 +17,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -34,6 +33,7 @@ public class SecurityConfig {
             "/auth/token",
             "/reportWarranty",
             "/reportWarranty/**",
+            "/printers/**",
             "/files/**",
             "/files"
     };
@@ -59,10 +59,13 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000")); // Use Arrays.asList to create a List
+        corsConfiguration.setAllowedOrigins(List.of(
+                "http://localhost:3000",
+                "http://localhost:3001"
+        ));
         corsConfiguration.addAllowedMethod("*");
         corsConfiguration.addAllowedHeader("*");
-        corsConfiguration.setAllowCredentials(true); // Enable credentials if needed
+        corsConfiguration.setAllowCredentials(true); // Bật thông tin xác thực (nếu cần)
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfiguration);

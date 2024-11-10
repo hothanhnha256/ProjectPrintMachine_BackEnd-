@@ -1,6 +1,5 @@
 package com.learingspring.demo_spring.ReportWarranty.dto.response;
 
-import com.learingspring.demo_spring.PrintMachine.entity.PrintMachine;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
