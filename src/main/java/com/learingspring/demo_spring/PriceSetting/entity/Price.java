@@ -1,6 +1,7 @@
 package com.learingspring.demo_spring.PriceSetting.entity;
 
 import com.learingspring.demo_spring.enums.ColorType;
+import com.learingspring.demo_spring.enums.PageType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -26,9 +27,8 @@ public class Price {
     @Enumerated(EnumType.STRING)
     ColorType colorType; //BLACK_WHITE AND COLOR
 
-    @Min(0)
-    @Max(5)
-    Number pageSize; // x is Ax
+    @Enumerated(EnumType.STRING)
+    PageType pageType;
 
     Boolean faceType; //0 is 1 face, 1 is 2 faces
 

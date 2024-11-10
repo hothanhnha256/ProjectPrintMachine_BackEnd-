@@ -9,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UseMaterialRequest {
+public class AdjustMaterialRequest {
 
     MaterialType name;
     Number value;

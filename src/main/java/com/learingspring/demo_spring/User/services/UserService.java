@@ -101,9 +101,10 @@ public class UserService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public UserResponse deleteUser(String id) {
+    public String deleteUser(String id) {
         User userToDelete = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_INVALID));
-        return userMapper.toUserResponse(userToDelete);
+        userRepository.delete(userToDelete);
+        return "Success delete user : " + userToDelete.getUsername();
     }
 
 

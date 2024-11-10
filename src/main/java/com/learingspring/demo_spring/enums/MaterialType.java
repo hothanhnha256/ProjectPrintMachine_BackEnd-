@@ -9,5 +9,4 @@ public enum MaterialType {
     A5Pages,
     COLOR_INK,
     BLACK_WHITE_INK
-
 }

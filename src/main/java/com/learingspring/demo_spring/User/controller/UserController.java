@@ -90,8 +90,8 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    ApiResponse<UserResponse> deleteUser(@PathVariable("userId") String userId) {
-        ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
+    ApiResponse<String> deleteUser(@PathVariable("userId") String userId) {
+        ApiResponse<String> apiResponse = new ApiResponse<>();
         apiResponse.setCode(200);
         apiResponse.setResult(userService.deleteUser(userId));
         return apiResponse;

@@ -63,10 +63,10 @@ public class PriceSettingService {
             throw new AppException(ErrorCode.ATTRIBUTE_NOT_EXITS);
         }
 
-        Price price =priceSettingRepository.findPriceByColorTypeAndFaceTypeAndPageSize(
+        Price price =priceSettingRepository.findPriceByColorTypeAndFaceTypeAndPageType(
                 priceSettingRequest.getColorType(),
                 priceSettingRequest.getFaceType(),
-                priceSettingRequest.getPageSize()
+                priceSettingRequest.getPageType()
         );
         price.setPricePage(priceSettingRequest.getPricePage());
         price.setDateUpdate(LocalDate.now());
@@ -86,10 +86,10 @@ public class PriceSettingService {
         return priceSettingMapper.toPriceResponse(price);
     }
     private Boolean checkExits(PriceSettingRequest priceSettingRequest){
-        return priceSettingRepository.existsByColorTypeAndFaceTypeAndPageSize(
+        return priceSettingRepository.existsByColorTypeAndFaceTypeAndPageType(
                 priceSettingRequest.getColorType(),
                 priceSettingRequest.getFaceType(),
-                priceSettingRequest.getPageSize());
+                priceSettingRequest.getPageType());
     }
 
 }

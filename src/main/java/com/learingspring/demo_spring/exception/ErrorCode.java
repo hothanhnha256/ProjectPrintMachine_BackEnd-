@@ -28,8 +28,12 @@ public enum ErrorCode {
     //For setting Price
     ATTRIBUTE_ALREADY_EXITS(1007, "Price for this attribute is already exits", HttpStatus.BAD_REQUEST),
     ATTRIBUTE_NOT_EXITS(1007, "Price for this attribute is not exits", HttpStatus.BAD_REQUEST),
-    ;
 
+    //For material storage
+    MATERIAL_ALREADY_EXITS(1008,"Material type already exits", HttpStatus.BAD_REQUEST),
+    MATERIAL_NOT_EXITS(1008,"Material type not exits", HttpStatus.BAD_REQUEST),
+    MATERIAL_NOT_ENOUGH(1008,"Our storage not enough, please add more material", HttpStatus.BAD_REQUEST)
+;
     private int code;
     private String message;
     private HttpStatusCode httpStatusCode;
