@@ -9,12 +9,12 @@ import lombok.experimental.FieldDefaults;
 public class AvailablePrintersResponse {
     String id;
     String name;
-    String inkStatus;
+    int inkStatus;
     Integer paperStatus;
     Integer capacity;
     Integer printWaiting;
 
-    public AvailablePrintersResponse(String id, String name, String inkStatus, Integer paperStatus, Integer capacity, Integer printWaiting) {
+    public AvailablePrintersResponse(String id, String name, int inkStatus, Integer paperStatus, Integer capacity, Integer printWaiting) {
         this.id = id;
         this.name = name;
         this.inkStatus = inkStatus;

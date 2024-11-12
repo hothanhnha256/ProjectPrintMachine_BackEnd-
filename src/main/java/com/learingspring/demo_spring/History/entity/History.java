@@ -1,11 +1,15 @@
 package com.learingspring.demo_spring.History.entity;
 
+import com.learingspring.demo_spring.Location.Entity.Location;
+import com.learingspring.demo_spring.enums.Process;
 import com.learingspring.demo_spring.File.entity.File;
 import com.learingspring.demo_spring.PrintMachine.entity.PrintMachine;
 import com.learingspring.demo_spring.User.entity.User;
+import com.learingspring.demo_spring.enums.TypeOfPage;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.Cascade;
 
 import java.time.LocalDate;
 
@@ -42,8 +46,20 @@ public class History {
     @JoinColumn(name = "printer_id", referencedColumnName ="id", nullable = false )
     PrintMachine printMachine;
 
-    Boolean status;
-    Number pageNum;
+    @JoinColumn(name= "number_of_copies")
+    int copiesNum;
+    @JoinColumn(name = "side_of_page")
+    boolean sideOfPage;  //false is 1 side of page, true is 2 sides of page.
+    @JoinColumn(name = "type_of_page")
+    @Enumerated(EnumType.STRING)
+    TypeOfPage typeOfPage;
+
+    @JoinColumn(name = "print_color")
+    boolean printColor; //false is no, true is yes
     LocalDate date;
 
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    Process process;
 }

@@ -1,5 +1,6 @@
 package com.learingspring.demo_spring.PrintMachine.controller;
 
+import com.learingspring.demo_spring.History.entity.History;
 import com.learingspring.demo_spring.PrintMachine.dto.request.PrintingImplementRequest;
 import com.learingspring.demo_spring.PrintMachine.dto.request.PrintmachineCreationRequest;
 import com.learingspring.demo_spring.PrintMachine.dto.response.AvailablePrintersResponse;
@@ -41,4 +42,8 @@ public class PrintmachineController {
         return printmachineService.availablePrinters(base, building, floor);
     }
 
+    @PostMapping("/implementprint")
+    ApiResponse<History> implementPrint(@RequestBody PrintingImplementRequest request){
+        return printmachineService.implementPrint(request);
+    }
 }

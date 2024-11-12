@@ -101,5 +101,8 @@ public class FileService {
                 .build();
     }
 
-
+    public File getFileById(String id) {
+        log.info("Inside getFileById method");
+        return fileRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.FILE_NOT_FOUND));
+    }
 }
