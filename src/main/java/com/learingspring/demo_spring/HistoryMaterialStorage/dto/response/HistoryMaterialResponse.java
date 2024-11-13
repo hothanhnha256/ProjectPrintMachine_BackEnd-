@@ -1,32 +1,27 @@
-package com.learingspring.demo_spring.HistoryMaterialStorage.entity;
+package com.learingspring.demo_spring.HistoryMaterialStorage.dto.response;
 
 import com.learingspring.demo_spring.PrintMachine.entity.PrintMachine;
 import com.learingspring.demo_spring.enums.MaterialType;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 
-
-@Entity
-@Setter
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class HistoryMaterialStorage {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class HistoryMaterialResponse {
+
     Long id;
 
-    @ManyToOne
-    @JoinColumn(name="id_machine", referencedColumnName = "id")
-    PrintMachine printMachine;
+    String id_machine;
 
-    @Enumerated(EnumType.STRING)
     MaterialType name;
 
     Number quantity;
