@@ -43,7 +43,7 @@ public class PrintmachineController {
     }
 
     @PostMapping("/implementprint")
-    ApiResponse<History> implementPrint(@RequestBody PrintingImplementRequest request){
+    ApiResponse<String> implementPrint(@RequestBody PrintingImplementRequest request){
         return printmachineService.implementPrint(request);
     }
 }

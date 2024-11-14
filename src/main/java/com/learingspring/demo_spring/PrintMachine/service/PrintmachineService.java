@@ -124,7 +124,7 @@ public class PrintmachineService {
         return result;
     }
 
-    public ApiResponse<History> implementPrint(PrintingImplementRequest request) {
+    public ApiResponse<String> implementPrint(PrintingImplementRequest request) {
         /*this place will handle wallet of User who has enough to pay later*/
         User user = userService.getUserById(request.getIdUser());
         File file = fileService.getFileById(request.getIdFile());
@@ -136,9 +136,10 @@ public class PrintmachineService {
 
         History history = historyService.logPrinting(user, file, printMachine, copiesNum, sideOfPage, typeOfPage, printColor);
 
-        ApiResponse<History> result = new ApiResponse<>();
+        ApiResponse<String> result = new ApiResponse<>();
+        result.setCode(200);
         result.setMessage("Print registration successful");
-        result.setResult(history);
+        result.setResult("Request was Recorded");
 
         // Thêm job vào hàng đợi của máy in
         addPrintJobToQueue(request.getIdPrinter(), history);
