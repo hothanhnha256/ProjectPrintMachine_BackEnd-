@@ -33,6 +33,7 @@ public interface PrintmachineRepository extends JpaRepository<PrintMachine,Strin
                                                           @Param("building") BuildingEnum building,
                                                           @Param("floor") int floor);
 
+
     @Query("SELECT p.status FROM  PrintMachine p WHERE p.id = :id")
     Boolean findStatusById(@Param("id") String id);
 
@@ -50,4 +51,6 @@ public interface PrintmachineRepository extends JpaRepository<PrintMachine,Strin
                             @Param("printWaiting") int printWaiting,
                             @Param("id") String id);
 
+    @Query("SELECT p.id FROM PrintMachine p WHERE p.status = :status")
+    List<String> findAllByStatus(@Param("status") boolean status);
 }

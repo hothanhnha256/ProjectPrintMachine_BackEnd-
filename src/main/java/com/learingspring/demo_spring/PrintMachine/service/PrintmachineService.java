@@ -20,6 +20,7 @@ import com.learingspring.demo_spring.enums.TypeOfPage;
 import com.learingspring.demo_spring.exception.ApiResponse;
 import com.learingspring.demo_spring.exception.AppException;
 import com.learingspring.demo_spring.exception.ErrorCode;
+import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,7 +43,7 @@ public class PrintmachineService {
     private final FileService fileService;
     private final HistoryService historyService;
 
-    // Khởi tạo map để lưu trữ luồng của từng máy in
+    // Khởi tạo map để lưu trữ thread của từng máy in
     private final Map<String, Thread> printerThreads = new HashMap<>();
 
     // Khởi tạo map để lưu trữ hàng đợi của từng máy in
@@ -79,7 +80,7 @@ public class PrintmachineService {
         BlockingQueue<History> printQueue = new LinkedBlockingQueue<>();
         printQueues.put(savedPrinter.getId(), printQueue);
 
-        // Khởi tạo own thread cho máy in này, xử lý cả việc lưu trữ công việc và thực hiện in
+        // Khởi tạo own thread cho máy in này
         Thread printerThread = new Thread(() -> processPrintJobs(savedPrinter.getId()));
         printerThread.start();
 
@@ -94,17 +95,16 @@ public class PrintmachineService {
         int record = printmachineRepository.updatePrinterStatus(status, ID);
         if (record <= 0) throw new AppException(ErrorCode.INVALID_KEY);
 
-        // Kiểm tra luồng hiện tại của máy in
-        Thread currentThread = printerThreads.get(ID);  // printerThreads là Map chứa luồng của mỗi máy in
+        // check thread of printer now
+        Thread currentThread = printerThreads.get(ID);
 
-        // Nếu trạng thái là true và chưa có luồng hoặc luồng đã kết thúc
+        // if status true but there is no thread running, create thread to do job
         if (status && (currentThread == null || !currentThread.isAlive())) {
-            // Tạo một luồng mới để xử lý công việc in cho máy in này
+            // create thread
             Thread newThread = new Thread(() -> processPrintJobs(ID));
-            printerThreads.put(ID, newThread);  // Lưu trữ luồng mới vào Map
-            newThread.start();  // Bắt đầu luồng mới
+            printerThreads.put(ID, newThread);  // Store new thread into Map
+            newThread.start();
         }
-
         return true;
     }
 
@@ -121,7 +121,6 @@ public class PrintmachineService {
             result.setMessage("Available printers found");
             result.setResult(printers);
         }
-
         return result;
     }
 
@@ -147,23 +146,22 @@ public class PrintmachineService {
         return result;
     }
 
+
     //-------------------------------------------Utilization tool-------------------------------------------------------
 
 
     private BaseEnum convertStringToBaseEnum(String baseStr) {
         try {
-            return BaseEnum.valueOf(baseStr.toUpperCase());  // Chuyển đổi chuỗi thành enum (chuyển sang chữ hoa để tránh lỗi)
+            return BaseEnum.valueOf(baseStr.toUpperCase());
         } catch (IllegalArgumentException e) {
-            // Nếu không tìm thấy enum khớp, ném lỗi AppException
             throw new AppException(ErrorCode.IVALID_BASE_ENUMCODE);
         }
     }
 
     private BuildingEnum convertStringToBuildingEnum(String buildingStr) {
         try {
-            return BuildingEnum.valueOf(buildingStr.toUpperCase());  // Chuyển đổi chuỗi thành enum (chuyển sang chữ hoa để tránh lỗi)
+            return BuildingEnum.valueOf(buildingStr.toUpperCase());
         } catch (IllegalArgumentException e) {
-            // Nếu không tìm thấy enum khớp, ném lỗi AppException
             throw new AppException(ErrorCode.IVALID_BUILDING_ENUMCODE);
         }
     }
@@ -190,10 +188,10 @@ public class PrintmachineService {
             while (!Thread.currentThread().isInterrupted()) {
                 if(!checkInkAndPaperStatus(printerId)){
                     System.out.println("Waiting for ink status");
-                    int i = printmachineRepository.updatePrinterStatus(false, printerId);
+                    printmachineRepository.updatePrinterStatus(false, printerId);
                 }
-                if(!getStatus(printerId)) break;  // khi máy in off then break
-                History request = queue.take(); // wait for new job
+                if(!getStatus(printerId)) break;
+                History request = queue.take();
                 performPrinting(request, printerId);
             }
         } catch (InterruptedException e) {
@@ -201,7 +199,6 @@ public class PrintmachineService {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            // Cleanup hoặc các thao tác cần thiết khi thread kết thúc
             System.out.println("Printing job processing stopped for printer: " + printerId);
         }
     }
@@ -219,7 +216,7 @@ public class PrintmachineService {
             historyService.updateProcess(id, Process.Completed);
             System.out.println("Printing job completed successfully.");
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); // Đảm bảo phục hồi trạng thái nếu bị ngắt
+            Thread.currentThread().interrupt();
             System.err.println("Printing job was interrupted: " + request);
         }
     }
@@ -246,6 +243,34 @@ public class PrintmachineService {
             throw new AppException(ErrorCode.INVALID_KEY);
         }
     }
+
+    @PostConstruct
+    private void init(){
+        List<String> idPrinters = printmachineRepository.findAllByStatus(true);
+
+        for (String idPrinter : idPrinters ){
+            // Khởi tạo own queue cho máy in này
+            BlockingQueue<History> printQueue = new LinkedBlockingQueue<>();
+            List<History> jobsNotDone = historyService.getNotDoneHistoryByNotProcess(Process.Completed, idPrinter);
+            for(History jobNotDone : jobsNotDone ){
+                try {
+                    printQueue.put(jobNotDone);
+                }catch (InterruptedException e) {
+                    // handle thread when interrupt
+                    Thread.currentThread().interrupt(); // ensure trạng thái gián đoạn của luồng được giữ lại
+                }
+            }
+            printQueues.put(idPrinter, printQueue);
+
+            // Khởi tạo own thread cho máy in này
+            Thread printerThread = new Thread(() -> processPrintJobs(idPrinter));
+            printerThread.start();
+
+            // store thread into map
+            printerThreads.put(idPrinter, printerThread);
+        }
+    }
+
 }
 
 

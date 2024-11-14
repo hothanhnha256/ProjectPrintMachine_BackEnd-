@@ -11,7 +11,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.Cascade;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 @Entity
@@ -56,7 +56,8 @@ public class History {
 
     @JoinColumn(name = "print_color")
     boolean printColor; //false is no, true is yes
-    LocalDate date;
+
+    LocalDateTime date;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
