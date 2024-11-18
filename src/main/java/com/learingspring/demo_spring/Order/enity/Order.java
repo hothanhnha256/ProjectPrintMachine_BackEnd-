@@ -28,7 +28,7 @@ public class Order {
     User user;
 
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name="price_id", referencedColumnName = "id", nullable = false)
     Price price;
 
@@ -36,7 +36,6 @@ public class Order {
     @JoinColumn(name="file_id", referencedColumnName = "id", nullable = false)
     File file;
 
-    int quantity;
     String typePaper;
     String status;
     LocalDate orderDate;

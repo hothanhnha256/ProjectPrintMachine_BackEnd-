@@ -27,6 +27,8 @@ public enum ErrorCode {
     INVALID_WALLET(1008, "Invalid wallet", HttpStatus.BAD_REQUEST),
     INSUFFICIENT_BALANCE(1009, "Insufficient balance", HttpStatus.BAD_REQUEST),
     WALLET_EXISTED(1010, "Wallet already existed", HttpStatus.BAD_REQUEST),
+    WALLET_NOT_FOUND(1011, "Wallet not found", HttpStatus.NOT_FOUND),
+    ORDER_NOT_FOUND(1012, "Order not found", HttpStatus.NOT_FOUND),
     ;
 
     private int code;

@@ -16,9 +16,15 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 
@@ -29,7 +35,6 @@ import java.time.LocalDate;
 public class OrderService {
     OrderRepository orderRepository;
     PriceSettingRepository priceSettingRepository;
-//    OrderMapper orderMapper;
     FileRepository fileRepository;
     UserRepository userRepository;
 
@@ -53,7 +58,6 @@ public class OrderService {
                 .file(file)
                 .price(price)
                 .user(user)
-                .quantity(orderRequest.getQuantity())
                 .typePaper(orderRequest.getTypePaper())
                 .status("PENDING")
                 .orderDate(LocalDate.now())
@@ -62,10 +66,29 @@ public class OrderService {
         return toOrderResponse(order);
     }
 
+    public Page<OrderResponse> getAllOrderByUser(int page, int size){
+        Pageable pageable = PageRequest.of(page, size);
+
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+
+        User user = userRepository.findByUsername(name)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_INVALID));
+
+        return orderRepository.findAllByUserId(user.getId(), pageable)
+                .map(this::toOrderResponse);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public Page<OrderResponse> getAllOrder(int page, int size){
+        Pageable pageable = PageRequest.of(page, size);
+        return orderRepository.findAll(pageable)
+                .map(this::toOrderResponse);
+    }
+
     private OrderResponse toOrderResponse(Order order){
         return OrderResponse.builder()
                 .id(order.getId())
-                .quantity(order.getQuantity())
                 .fileName(order.getFile().getName())
                 .price(order.getPrice().getPricePage())
                 .colorType(order.getPrice().getColorType())

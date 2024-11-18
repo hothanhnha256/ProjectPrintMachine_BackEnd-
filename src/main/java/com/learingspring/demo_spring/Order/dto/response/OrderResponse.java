@@ -12,7 +12,6 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderResponse {
     String id;
-    int quantity;
     String fileName;
     Number price;
     String colorType;

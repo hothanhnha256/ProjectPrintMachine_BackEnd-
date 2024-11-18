@@ -5,10 +5,8 @@ import com.learingspring.demo_spring.Order.dto.response.OrderResponse;
 import com.learingspring.demo_spring.Order.service.OrderService;
 import com.learingspring.demo_spring.exception.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/order")
@@ -26,6 +24,27 @@ public class OrderController {
         return ApiResponse.<OrderResponse>builder()
                 .code(200)
                 .result(orderService.createOrder(orderRequest))
+                .build();
+    }
+
+
+    @GetMapping("/get-my-order")
+    public ApiResponse<Page<OrderResponse>> getAllOrderByUser(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size){
+        return ApiResponse.<Page<OrderResponse>>builder()
+                .code(200)
+                .result(orderService.getAllOrderByUser(page, size))
+                .build();
+    }
+
+    @GetMapping("/get-all-order")
+    public ApiResponse<Page<OrderResponse>> getAllOrder(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size){
+        return ApiResponse.<Page<OrderResponse>>builder()
+                .code(200)
+                .result(orderService.getAllOrder(page, size))
                 .build();
     }
 }
