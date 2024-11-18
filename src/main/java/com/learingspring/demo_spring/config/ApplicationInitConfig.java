@@ -59,59 +59,7 @@ public class ApplicationInitConfig {
                 userRepository.save(user);
                 log.warn("admin user has been created with default password: admin, please change it");
             }
-            if(!priceSettingRepository.existsByColorTypeAndFaceTypeAndPageType(
-                    ColorType.COLOR,true,PageType.A4Page
-            )){
-                Price price = Price.builder()
-                        .colorType(ColorType.COLOR)
-                        .pageType(PageType.A4Page)
-                        .faceType(true)
-                        .pricePage(1000)
-                        .dateUpdate(LocalDate.now())
-                        .build();
-                priceSettingRepository.save(price);
-                log.warn("price has been created with default, please change it");
-            }
 
-            if(!priceSettingRepository.existsByColorTypeAndFaceTypeAndPageType(
-                    ColorType.COLOR,false,PageType.A4Page
-            )){
-                Price price = Price.builder()
-                        .colorType(ColorType.COLOR)
-                        .faceType(false)
-                        .pageType(PageType.A4Page)
-                        .pricePage(1000)
-                        .dateUpdate(LocalDate.now())
-                        .build();
-                priceSettingRepository.save(price);
-                log.warn("price has been created with default, please change it");
-            }
-            if(!priceSettingRepository.existsByColorTypeAndFaceTypeAndPageType(
-                    ColorType.BLACK_WHITE,true,PageType.A4Page
-            )){
-                Price price = Price.builder()
-                        .colorType(ColorType.BLACK_WHITE)
-                        .faceType(false)
-                        .pageType(PageType.A4Page)
-                        .pricePage(1000)
-                        .dateUpdate(LocalDate.now())
-                        .build();
-                priceSettingRepository.save(price);
-                log.warn("price has been created with default, please change it");
-            }
-            if(!priceSettingRepository.existsByColorTypeAndFaceTypeAndPageType(
-                    ColorType.BLACK_WHITE,false,PageType.A4Page
-            )){
-                Price price = Price.builder()
-                        .colorType(ColorType.BLACK_WHITE)
-                        .faceType(false)
-                        .pageType(PageType.A4Page)
-                        .pricePage(1000)
-                        .dateUpdate(LocalDate.now())
-                        .build();
-                priceSettingRepository.save(price);
-                log.warn("price has been created with default, please change it");
-            }
             log.info("Application initialization completed .....");
         };
     }

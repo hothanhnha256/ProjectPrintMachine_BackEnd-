@@ -49,7 +49,7 @@ public class MaterialStorageService {
 
         materialStorage.setValue(materialStorage.getValue().intValue() + updateMaterialRequest.getValue().intValue());
         if (materialStorage.getValue().intValue()<0){
-            throw new AppException(ErrorCode.ATTRIBUTE_NOT_EXITS);
+            throw new AppException(ErrorCode.MATERIAL_NOT_ENOUGH);
         }
         materialStorage.setDateUpdate(LocalDate.now());
         materialStorageRepository.save(materialStorage);
