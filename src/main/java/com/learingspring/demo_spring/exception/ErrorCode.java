@@ -12,6 +12,7 @@ public enum ErrorCode {
     USER_DOB_INVALID(1002, "user must be {min} years old", HttpStatus.BAD_REQUEST),
     UNCATEGORIZED_EXCEPTION(999, "Uncategorized", HttpStatus.INTERNAL_SERVER_ERROR),
     INVALID_PASS(1200, "password must be at least 8 characters and max 20 characters", HttpStatus.BAD_REQUEST),
+    INCORRECT_PASS(1200, "in correct password", HttpStatus.BAD_REQUEST),
     INVALID_USER(1200, "Username must be at least 8 characters and max 20 characters", HttpStatus.BAD_REQUEST),
     INVALID_KEY(1111, "we have some problem in server", HttpStatus.INTERNAL_SERVER_ERROR),
     UNAUTHENTICATED_EXCEPTION(9999, "Unauthenticated", HttpStatus.UNAUTHORIZED),

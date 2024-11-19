@@ -7,6 +7,7 @@ import com.learingspring.demo_spring.PriceSetting.entity.Price;
 import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface PriceSettingMapper {
+
     PriceSettingResponse toPriceResponse(Price price);
     Price toPrice(PriceSettingRequest request);
 }

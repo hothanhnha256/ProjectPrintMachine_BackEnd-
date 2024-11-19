@@ -32,7 +32,6 @@ public class Price {
 
     Boolean faceType; //0 is 1 face, 1 is 2 faces
 
-    @Min(0)
     Number pricePage;
 
     LocalDate dateUpdate;

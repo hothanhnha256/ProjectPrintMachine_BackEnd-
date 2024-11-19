@@ -12,6 +12,8 @@ import java.time.LocalDate;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PriceSettingResponse {
+    Long id;
+
     ColorType colorType; //BLACK_WHITE AND COLOR
 
     PageType pageType;

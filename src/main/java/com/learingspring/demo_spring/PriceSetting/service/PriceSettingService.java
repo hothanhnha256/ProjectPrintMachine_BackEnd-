@@ -8,6 +8,7 @@ import com.learingspring.demo_spring.Auth.dto.response.AuthenticationResponse;
 import com.learingspring.demo_spring.Auth.dto.response.IntrospectResponse;
 import com.learingspring.demo_spring.Auth.entity.InvalidateToken;
 import com.learingspring.demo_spring.Auth.repository.InvalidateTokenRepository;
+import com.learingspring.demo_spring.PriceSetting.dto.request.PriceSearchRequest;
 import com.learingspring.demo_spring.PriceSetting.dto.request.PriceSettingRequest;
 import com.learingspring.demo_spring.PriceSetting.dto.response.PriceSettingResponse;
 import com.learingspring.demo_spring.PriceSetting.entity.Price;
@@ -16,6 +17,7 @@ import com.learingspring.demo_spring.PriceSetting.repository.PriceSettingReposit
 import com.learingspring.demo_spring.User.entity.User;
 import com.learingspring.demo_spring.User.repository.UserRepository;
 import com.learingspring.demo_spring.enums.ColorType;
+import com.learingspring.demo_spring.enums.PageType;
 import com.learingspring.demo_spring.exception.AppException;
 import com.learingspring.demo_spring.exception.ErrorCode;
 import com.nimbusds.jose.*;
@@ -52,11 +54,13 @@ public class PriceSettingService {
     PriceSettingRepository priceSettingRepository;
     PriceSettingMapper priceSettingMapper;
 
-    public List<PriceSettingResponse> getAllPriceSettings() {
-        log.info(
-                priceSettingRepository.findAll().toString()
-        );
-        return priceSettingRepository.findAll().stream().map(priceSettingMapper::toPriceResponse).toList();
+    public List<PriceSettingResponse> getAllPriceSettings(
+            String colorType,String faceType, String pageType
+    ) {
+
+        return priceSettingRepository.findAllPrice(
+               colorType, faceType, pageType
+        ).stream().map(priceSettingMapper::toPriceResponse).toList();
     }
 
     public PriceSettingResponse updatePriceSettings(PriceSettingRequest priceSettingRequest) {
@@ -82,9 +86,17 @@ public class PriceSettingService {
             throw new AppException(ErrorCode.ATTRIBUTE_ALREADY_EXITS);
         }
 
+
         Price price= priceSettingMapper.toPrice(priceSettingRequest);
         price.setDateUpdate(LocalDate.now());
-        priceSettingRepository.save(price);
+
+        try {
+            priceSettingRepository.save(price);
+
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
         return priceSettingMapper.toPriceResponse(price);
     }
     private Boolean checkExits(PriceSettingRequest priceSettingRequest){
@@ -93,5 +105,6 @@ public class PriceSettingService {
                 priceSettingRequest.getFaceType(),
                 priceSettingRequest.getPageType());
     }
+
 
 }

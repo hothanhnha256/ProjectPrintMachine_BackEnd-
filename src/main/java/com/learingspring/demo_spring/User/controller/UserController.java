@@ -1,6 +1,7 @@
 package com.learingspring.demo_spring.User.controller;
 
 
+import com.learingspring.demo_spring.User.dto.request.UserUpdatePasswordRequest;
 import jakarta.validation.Valid;
 
 import org.springframework.data.domain.Page;
@@ -81,6 +82,15 @@ public class UserController {
         apiResponse.setResult(userService.updateUser(userId, user));
         return apiResponse;
     }
+
+    @PutMapping("/{userId}/password")
+    ApiResponse<UserResponse> updateUser(@PathVariable("userId") String userId, @RequestBody UserUpdatePasswordRequest user) {
+        ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
+        apiResponse.setCode(200);
+        apiResponse.setResult(userService.changePasswordUser(userId, user));
+        return apiResponse;
+    }
+
 
     @GetMapping("/myInfo")
     ApiResponse<UserResponse> getMyInfo() {
