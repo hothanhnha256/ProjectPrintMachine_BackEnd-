@@ -148,7 +148,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>com.learningspring.demo_spring.MainApplication</mainClass>
+							<mainClass>com.learingspring.demo_spring.MainApplication</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
