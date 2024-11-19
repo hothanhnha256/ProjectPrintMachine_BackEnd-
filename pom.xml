@@ -148,7 +148,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>vn.smartprint.MainApplication</mainClass>
+							<mainClass>vn.demo-spring.MainApplication</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
