@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ReportWarrantyRepository extends JpaRepository<ReportWarranty, String> {
 
     Page<ReportWarranty> findAllByPrintMachine_Id(String machineId, Pageable pageable);
+
 }

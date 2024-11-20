@@ -15,14 +15,11 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PriceSettingRequest {
+public class PriceSearchRequest {
 
     ColorType colorType; //BLACK_WHITE AND COLOR
 
     PageType pageType;
 
     Boolean faceType; //0 is 1 face, 1 is 2 faces
-
-    Number pricePage;
-
 }

@@ -12,6 +12,7 @@ public enum ErrorCode {
     USER_DOB_INVALID(1002, "user must be {min} years old", HttpStatus.BAD_REQUEST),
     UNCATEGORIZED_EXCEPTION(999, "Uncategorized", HttpStatus.INTERNAL_SERVER_ERROR),
     INVALID_PASS(1200, "password must be at least 8 characters and max 20 characters", HttpStatus.BAD_REQUEST),
+    INCORRECT_PASS(1200, "in correct password", HttpStatus.BAD_REQUEST),
     INVALID_USER(1200, "Username must be at least 8 characters and max 20 characters", HttpStatus.BAD_REQUEST),
     INVALID_KEY(1111, "we have some problem in server", HttpStatus.INTERNAL_SERVER_ERROR),
     UNAUTHENTICATED_EXCEPTION(9999, "Unauthenticated", HttpStatus.UNAUTHORIZED),
@@ -25,8 +26,18 @@ public enum ErrorCode {
     FILE_NOT_FOUND(1006, "File not found", HttpStatus.NOT_FOUND),
     IVALID_BASE_ENUMCODE(1007, "Invalid BaseEnum value", HttpStatus.BAD_REQUEST),
     IVALID_BUILDING_ENUMCODE(1007, "Invalid BuildingEnum value", HttpStatus.BAD_REQUEST),
-    ;
 
+    ATTRIBUTE_ALREADY_EXITS(1007, "Price for this attribute is already exits", HttpStatus.BAD_REQUEST),
+    ATTRIBUTE_NOT_EXITS(1007, "Price for this attribute is not exits", HttpStatus.BAD_REQUEST),
+
+    //For material storage
+    MATERIAL_ALREADY_EXITS(1008,"Material type already exits", HttpStatus.BAD_REQUEST),
+    MATERIAL_NOT_EXITS(1008,"Material type not exits", HttpStatus.BAD_REQUEST),
+    MATERIAL_NOT_ENOUGH(1008,"Our storage not enough, please add more material", HttpStatus.BAD_REQUEST),
+
+    //For history material storage
+    HISTORY_ID_DOES_NOT_EXITS(1009,"History with this id doesn't exits", HttpStatus.BAD_REQUEST)
+    ;
     private int code;
     private String message;
     private HttpStatusCode httpStatusCode;

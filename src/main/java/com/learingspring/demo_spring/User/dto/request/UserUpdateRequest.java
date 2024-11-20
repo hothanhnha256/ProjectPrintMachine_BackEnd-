@@ -16,11 +16,8 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserUpdateRequest {
-    @Size(min = 8, max = 30, message = "INVALID_PASS")
-    String password;
     String firstName;
     String lastName;
     @DobConstraint(min = 10, message = "USER_DOB_INVALID")
     LocalDate birthDate;
-    Number balance;
 }

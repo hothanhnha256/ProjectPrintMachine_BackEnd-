@@ -2,6 +2,7 @@ package com.learingspring.demo_spring.User.services;
 
 import java.util.List;
 
+import com.learingspring.demo_spring.User.dto.request.UserUpdatePasswordRequest;
 import com.learingspring.demo_spring.enums.Roles;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -95,16 +96,27 @@ public class UserService {
     public UserResponse updateUser(String userID, UserUpdateRequest user) {
         User userToUpdate = userRepository.findById(userID).orElseThrow(() -> new AppException(ErrorCode.USER_INVALID));
         userMapper.updateUser(userToUpdate, user);
-        userToUpdate.setPassword(passwordEncoder.encode(user.getPassword()));
 
         return userMapper.toUserResponse(userRepository.save(userToUpdate));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    public UserResponse deleteUser(String id) {
-        User userToDelete = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_INVALID));
-        return userMapper.toUserResponse(userToDelete);
+    public UserResponse changePasswordUser(String userID, UserUpdatePasswordRequest userUpdatePasswordRequest) {
+        User user = userRepository.findById(userID).orElseThrow(() -> new AppException(ErrorCode.USER_INVALID));
+        if (!passwordEncoder.matches(userUpdatePasswordRequest.oldPassword, user.getPassword())) {
+            throw new AppException(ErrorCode.INCORRECT_PASS);
+        }
+        user.setPassword(passwordEncoder.encode(userUpdatePasswordRequest.password));
+        return userMapper.toUserResponse(userRepository.save(user));
     }
+
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public String deleteUser(String id) {
+        User userToDelete = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_INVALID));
+        userRepository.delete(userToDelete);
+        return "Success delete user : " + userToDelete.getUsername();
+    }
+
 
     @PostAuthorize("returnObject.username==authentication.name") // Recheck to auth
     public UserResponse getMyInfo() {

@@ -3,6 +3,7 @@ package com.learingspring.demo_spring.config;
 import com.learingspring.demo_spring.PriceSetting.entity.Price;
 import com.learingspring.demo_spring.PriceSetting.repository.PriceSettingRepository;
 import com.learingspring.demo_spring.enums.ColorType;
+import com.learingspring.demo_spring.enums.PageType;
 import com.learingspring.demo_spring.enums.Roles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
@@ -58,25 +59,7 @@ public class ApplicationInitConfig {
                 userRepository.save(user);
                 log.warn("admin user has been created with default password: admin, please change it");
             }
-            if(!priceSettingRepository.existsByColorType(ColorType.COLOR.toString())){
-                Price price = Price.builder()
-                        .colorType(ColorType.COLOR.toString())
-                        .pricePage(1000)
-                        .dateUpdate(LocalDate.now())
-                        .build();
-                priceSettingRepository.save(price);
-                log.warn("price has been created with default, please change it");
-            }
 
-            if(!priceSettingRepository.existsByColorType(ColorType.BLACK_WHITE.toString())){
-                Price price = Price.builder()
-                        .colorType(ColorType.BLACK_WHITE.toString())
-                        .pricePage(1000)
-                        .dateUpdate(LocalDate.now())
-                        .build();
-                priceSettingRepository.save(price);
-                log.warn("price has been created with default, please change it");
-            }
             log.info("Application initialization completed .....");
         };
     }

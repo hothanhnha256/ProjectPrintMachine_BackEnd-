@@ -33,7 +33,9 @@ public class SecurityConfig {
             "/auth/token",
             "/reportWarranty",
             "/reportWarranty/**",
-            "/printers/**"
+            "/printers/**",
+            "/files/**",
+            "/files"
     };
 
     @Bean
