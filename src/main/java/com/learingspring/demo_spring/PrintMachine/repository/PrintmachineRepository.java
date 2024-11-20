@@ -6,6 +6,7 @@ import com.learingspring.demo_spring.PrintMachine.dto.response.AvailablePrinters
 import com.learingspring.demo_spring.PrintMachine.entity.PrintMachine;
 
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -53,4 +54,13 @@ public interface PrintmachineRepository extends JpaRepository<PrintMachine,Strin
 
     @Query("SELECT p.id FROM PrintMachine p WHERE p.status = :status")
     List<String> findAllByStatus(@Param("status") boolean status);
+
+    @Query("SELECT p FROM PrintMachine p JOIN p.address l")
+    List<PrintMachine> findAllPrinter();
+
+    @EntityGraph(attributePaths = {"address"})
+    List<PrintMachine> findAll();
+
+    @Query("SELECT p.printWaiting FROM PrintMachine p WHERE p.id = :id")
+    Integer findWaitingById(@Param("id") String id);
 }

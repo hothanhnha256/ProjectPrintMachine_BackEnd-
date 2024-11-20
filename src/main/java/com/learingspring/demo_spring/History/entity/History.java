@@ -43,7 +43,13 @@ public class History {
     File file;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "printer_id", referencedColumnName ="id", nullable = false )
+    @JoinColumn(
+            name = "printer_id",
+            referencedColumnName = "id",
+            nullable = true,
+            foreignKey = @ForeignKey(name = "fk_history_printmachine",
+                    foreignKeyDefinition = "FOREIGN KEY (printer_id) REFERENCES print_machine(id) ON DELETE SET NULL") // Cấu hình ON DELETE CASCADE
+    )
     PrintMachine printMachine;
 
     @JoinColumn(name= "number_of_copies")

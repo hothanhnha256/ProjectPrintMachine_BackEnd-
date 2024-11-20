@@ -147,6 +147,55 @@ public class PrintmachineService {
         return result;
     }
 
+    public ApiResponse<List<PrintMachine>> allPrintMachines() {
+        ApiResponse<List<PrintMachine>> result = new ApiResponse<>();
+
+        try {
+            // Truy vấn tất cả các máy in
+            List<PrintMachine> printMachines = printmachineRepository.findAll();
+
+            // Kiểm tra nếu không có máy in nào
+            if (printMachines.isEmpty()) {
+                result.setCode(404);  // Có thể dùng 404 để chỉ ra rằng không có dữ liệu
+                result.setMessage("No print machines found.");
+            } else {
+                result.setCode(200);  // Thành công
+                result.setResult(printMachines);
+                result.setMessage("Successfully fetched print machines.");
+            }
+        } catch (Exception e) {
+            // Xử lý lỗi chung nếu có
+            result.setCode(500);  // 500 cho lỗi server
+            result.setMessage("An error occurred while fetching print machines: " + e.getMessage());
+        }
+
+        return result;
+    }
+
+    public ApiResponse<Void> deletePrintMachine(String id) {
+        ApiResponse<Void> response = new ApiResponse<>();
+        try{
+            boolean exists = printmachineRepository.existsById(id);
+            if(!exists){
+                response.setCode(404);
+                response.setMessage("Printer with ID " + id + " not found.");
+                return response;
+            }
+            Integer printWaiting = printmachineRepository.findWaitingById(id);
+            if(printWaiting > 0){
+                response.setCode(402);
+                response.setMessage("Delete fail! Printer is working");
+                return response;
+            }
+            printmachineRepository.deleteById(id);
+            response.setCode(200);
+            response.setMessage("Print machine deleted successfully.");
+        } catch (Exception e) {
+            response.setCode(500); // Lỗi server
+            response.setMessage("Error occurred while deleting print machine: " + e.getMessage());
+        }
+        return response;
+    }
 
     //-------------------------------------------Utilization tool-------------------------------------------------------
 
@@ -187,9 +236,10 @@ public class PrintmachineService {
                 throw new AppException(ErrorCode.INVALID_KEY);
             }
             while (!Thread.currentThread().isInterrupted()) {
-                if(!checkInkAndPaperStatus(printerId)){
+                if(!checkInkAndPaperStatus(printerId)){     //Check does it enough Ink and paper for student to use service
                     System.out.println("Waiting for ink status");
                     printmachineRepository.updatePrinterStatus(false, printerId);
+                    break;
                 }
                 if(!getStatus(printerId)) break;
                 History request = queue.take();

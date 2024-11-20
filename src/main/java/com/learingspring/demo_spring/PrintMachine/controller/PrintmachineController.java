@@ -1,6 +1,5 @@
 package com.learingspring.demo_spring.PrintMachine.controller;
 
-import com.learingspring.demo_spring.History.entity.History;
 import com.learingspring.demo_spring.PrintMachine.dto.request.PrintingImplementRequest;
 import com.learingspring.demo_spring.PrintMachine.dto.request.PrintmachineCreationRequest;
 import com.learingspring.demo_spring.PrintMachine.dto.response.AvailablePrintersResponse;
@@ -46,4 +45,15 @@ public class PrintmachineController {
     ApiResponse<String> implementPrint(@RequestBody PrintingImplementRequest request){
         return printmachineService.implementPrint(request);
     }
+
+    @GetMapping("/all-printers")
+    ApiResponse<List<PrintMachine>> allPrinters(){
+        return printmachineService.allPrintMachines();
+    }
+
+    @DeleteMapping("/delete-printer")
+    ApiResponse<Void> deletePrint(@RequestParam String id){
+        return printmachineService.deletePrintMachine(id);
+    }
+
 }

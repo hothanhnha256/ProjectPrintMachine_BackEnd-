@@ -30,7 +30,7 @@ public class PrintMachine {
     String model;
     String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "locationId") // set name foreign key
     Location address;
 
