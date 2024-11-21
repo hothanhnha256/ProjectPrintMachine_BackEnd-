@@ -1,12 +1,12 @@
 package com.learingspring.demo_spring.enums;
 
 public enum MaterialType {
-    A0Pages,
-    A1Pages,
-    A2Pages,
-    A3Pages,
-    A4Pages,
-    A5Pages,
+    A0Page,
+    A1Page,
+    A2Page,
+    A3Page,
+    A4Page,
+    A5Page,
     COLOR_INK,
     BLACK_WHITE_INK
 }
