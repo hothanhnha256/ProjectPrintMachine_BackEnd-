@@ -30,12 +30,12 @@ public class PrintMachine {
     String model;
     String description;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "locationId") // set name foreign key
     Location address;
 
     //Status
-    String inkStatus;
+    int inkStatus;
     Integer paperStatus;
     Integer capacity;
     @JoinColumn(name = "printWaiting")

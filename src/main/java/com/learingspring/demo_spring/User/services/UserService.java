@@ -127,4 +127,8 @@ public class UserService {
         User finduser = userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_EXISTED));
         return userMapper.toUserResponse(finduser);
     }
+
+    public User getUserById(String id) {
+        return userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_INVALID));
+    }
 }

@@ -41,4 +41,19 @@ public class PrintmachineController {
         return printmachineService.availablePrinters(base, building, floor);
     }
 
+    @PostMapping("/implementprint")
+    ApiResponse<String> implementPrint(@RequestBody PrintingImplementRequest request){
+        return printmachineService.implementPrint(request);
+    }
+
+    @GetMapping("/all-printers")
+    ApiResponse<List<PrintMachine>> allPrinters(){
+        return printmachineService.allPrintMachines();
+    }
+
+    @DeleteMapping("/delete-printer")
+    ApiResponse<Void> deletePrint(@RequestParam String id){
+        return printmachineService.deletePrintMachine(id);
+    }
+
 }

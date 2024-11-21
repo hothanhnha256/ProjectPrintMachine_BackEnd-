@@ -1,13 +1,10 @@
 package com.learingspring.demo_spring.Location.Entity;
 
-import com.learingspring.demo_spring.Location.Enum.BaseEnum;
-import com.learingspring.demo_spring.Location.Enum.BuildingEnum;
-import com.learingspring.demo_spring.PrintMachine.entity.PrintMachine;
+import com.learingspring.demo_spring.enums.BaseEnum;
+import com.learingspring.demo_spring.enums.BuildingEnum;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Entity
 @Getter

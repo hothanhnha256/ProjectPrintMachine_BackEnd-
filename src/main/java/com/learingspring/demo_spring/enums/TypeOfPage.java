@@ -1,4 +1,4 @@
-package com.learingspring.demo_spring.PrintMachine.Enum;
+package com.learingspring.demo_spring.enums;
 
 public enum TypeOfPage {
     A1,A2,A3,A4,A5,A6,A7,A8;
