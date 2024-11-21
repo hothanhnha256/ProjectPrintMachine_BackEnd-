@@ -1,8 +1,6 @@
 package com.learingspring.demo_spring.User.entity;
 
 import java.time.LocalDate;
-import java.util.Set;
-
 import com.learingspring.demo_spring.Wallet.enity.Wallet;
 import com.learingspring.demo_spring.customAnotation.email.EmailConstraint;
 import com.learingspring.demo_spring.enums.Roles;
@@ -37,7 +35,7 @@ public class User {
     LocalDate birthDate;
 
     @Column(nullable = false)
-    long capacity;
+    Long capacity;
 
     Roles role;
 

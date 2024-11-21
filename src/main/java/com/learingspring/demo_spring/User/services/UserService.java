@@ -1,5 +1,7 @@
 package com.learingspring.demo_spring.User.services;
 
+import com.learingspring.demo_spring.Wallet.enity.Wallet;
+import com.learingspring.demo_spring.Wallet.repository.WalletRepository;
 import com.learingspring.demo_spring.enums.Roles;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -25,6 +27,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDate;
+
 @Slf4j
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -34,6 +38,7 @@ public class UserService {
     private UserRepository userRepository;
     private UserMapper userMapper;
     private PasswordEncoder passwordEncoder;
+    private WalletRepository walletRepository;
 
     public UserResponse createRequest(UserCreationRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
@@ -41,6 +46,14 @@ public class UserService {
         }
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        Wallet wallet = Wallet.builder()
+                .updatedAt(LocalDate.now())
+                .balance(0)
+                .build();
+
+        walletRepository.save(wallet);
+        user.setWallet(wallet);
 
         user.setRole(Roles.USER);
         try {

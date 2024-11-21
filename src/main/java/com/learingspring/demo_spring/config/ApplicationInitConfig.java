@@ -52,7 +52,6 @@ public class ApplicationInitConfig {
                         .role(Roles.ADMIN)
                         .email("adminadmin@hcmut.edu.vn")
                         .mssv("9999999")
-                        .balance(1000000000)
                         .build();
 
                 userRepository.save(user);

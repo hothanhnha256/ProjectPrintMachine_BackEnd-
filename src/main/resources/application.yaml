@@ -4,15 +4,15 @@ server:
     context-path:
 spring:
   datasource:
-    url: "jdbc:mysql://localhost:3306/smartprint"
+    url: "jdbc:mysql://localhost:3306/printdb"
     driver-class-name: "com.mysql.cj.jdbc.Driver"
     username: root
-    password: nhahothanh2564.
+    password: 123
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
 jwt:
-    signerKey: "/OMSdnoPis5/iOGhhaYJcZYJZVg/GGyBNwFY7roCuir6AnYbG4PnRioUoBdgUmSC"
-    valid-duration: 3600 #second
-    refreshable-duration: 360000 #second
+  signerKey: "CDLTHzPElpVbye7QsmKoyj69gazLoxcy7o6oP+VdGzsjA8VK/rc8N8m7Er8Gib02"
+  valid-duration: 3600 #second
+  refreshable-duration: 360000 #second

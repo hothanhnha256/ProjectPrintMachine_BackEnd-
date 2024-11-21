@@ -19,6 +19,7 @@ import java.util.Base64;
 public class File {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name="id")
     String id;
 
     @Lob

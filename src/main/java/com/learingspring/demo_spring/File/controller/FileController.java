@@ -5,7 +5,7 @@ import com.learingspring.demo_spring.File.dto.response.FileResponse;
 import com.learingspring.demo_spring.File.service.FileService;
 import com.learingspring.demo_spring.exception.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,9 +16,11 @@ import java.util.List;
 @RequestMapping("/files")
 @Slf4j
 public class FileController {
-    @Autowired
-    private FileService fileService;
+    private final FileService fileService;
 
+    public FileController(FileService fileService) {
+        this.fileService = fileService;
+    }
 
 
     @GetMapping("/get-file/{id}")
@@ -30,11 +32,13 @@ public class FileController {
     }
 
     @GetMapping("/get-all")
-    public ApiResponse<List<FileResponse>> getAllFilesEachUser() {
-        return ApiResponse.<List<FileResponse>>builder()
-                .code(200)
-                .result(fileService.getAllFilesByStudent())
-                .build();
+    public ApiResponse<Page<FileResponse>> getAllFilesByUser(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        ApiResponse<Page<FileResponse>> apiResponse = new ApiResponse<>();
+        apiResponse.setCode(200);
+        apiResponse.setResult(fileService.getAllFilesByStudent(page, size));
+        return apiResponse;
     }
 
     @PostMapping("/upload")

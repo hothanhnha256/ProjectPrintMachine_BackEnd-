@@ -12,8 +12,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -78,9 +79,9 @@ public class FileService {
 
 
 
-    public List<FileResponse> getAllFilesByStudent() {
+    public Page<FileResponse> getAllFilesByStudent(int page, int size) {
         log.info("Inside getAllFilesByStudent method");
-
+        Pageable pageable = PageRequest.of(page, size);
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
 
@@ -88,10 +89,8 @@ public class FileService {
         User user = userRepository.findByUsername(name)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_INVALID));
 
-        List<File> files = fileRepository.findAllByUserId(user.getId());
-        return files.stream()
-                .map(this::toFileResponse)
-                .collect(Collectors.toList());
+        return fileRepository.findAllByUserId(user.getId(), pageable)
+                .map(this::toFileResponse);
     }
 
     public FileResponse deleteFile(String id) {

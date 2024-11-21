@@ -62,4 +62,13 @@ public class WalletService {
         walletRepository.save(wallet);
         return walletMapper.toWalletResponse(wallet);
     }
+
+    public void topUpWallet(String userId, Number amount) {
+        log.info("Top-up wallet");
+        User user = userRepository.findById(userId).orElseThrow(()
+                -> new AppException(ErrorCode.USER_EXISTED));
+        Wallet wallet = user.getWallet();
+        wallet.setBalance(wallet.getBalance().doubleValue() + amount.doubleValue());
+        walletRepository.save(wallet);
+    }
 }
