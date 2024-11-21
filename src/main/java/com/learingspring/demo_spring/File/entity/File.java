@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.Base64;
 
 
 @Entity
@@ -18,11 +19,12 @@ import java.time.LocalDate;
 public class File {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name="id")
     String id;
 
     @Lob
-    @Column(name="file_size",columnDefinition = "LONGBLOB")
-    byte[] fileSize;
+    @Column(name="file_data",columnDefinition = "LONGBLOB")
+    byte[] fileData;
 
     String filetype;
 
