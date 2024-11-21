@@ -26,6 +26,12 @@ public enum ErrorCode {
     FILE_NOT_FOUND(1006, "File not found", HttpStatus.NOT_FOUND),
     IVALID_BASE_ENUMCODE(1007, "Invalid BaseEnum value", HttpStatus.BAD_REQUEST),
     IVALID_BUILDING_ENUMCODE(1007, "Invalid BuildingEnum value", HttpStatus.BAD_REQUEST),
+    STORAGE_LIMIT_EXCEEDED(1007, "Storage limit exceeded", HttpStatus.BAD_REQUEST),
+    INVALID_WALLET(1008, "Invalid wallet", HttpStatus.BAD_REQUEST),
+    INSUFFICIENT_BALANCE(1009, "Insufficient balance", HttpStatus.BAD_REQUEST),
+    WALLET_EXISTED(1010, "Wallet already existed", HttpStatus.BAD_REQUEST),
+    WALLET_NOT_FOUND(1011, "Wallet not found", HttpStatus.NOT_FOUND),
+    ORDER_NOT_FOUND(1012, "Order not found", HttpStatus.NOT_FOUND),
 
     ATTRIBUTE_ALREADY_EXITS(1007, "Price for this attribute is already exits", HttpStatus.BAD_REQUEST),
     ATTRIBUTE_NOT_EXITS(1007, "Price for this attribute is not exits", HttpStatus.BAD_REQUEST),

@@ -39,8 +39,6 @@ public class PriceSettingController {
     }
 
 
-
-
     @PostMapping()
     ApiResponse<PriceSettingResponse> updatePriceSettings(@RequestBody PriceSettingRequest priceSettingRequest){
         return ApiResponse.<PriceSettingResponse>builder()

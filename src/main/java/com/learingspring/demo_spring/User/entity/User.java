@@ -42,6 +42,10 @@ public class User {
 
     Roles role;
 
+    @OneToOne
+    @JoinColumn(name = "wallet_id", referencedColumnName = "id")
+    com.learingspring.demo_spring.Wallet.entity.Wallet wallet;
+
     LocalDate createdAt;
     LocalDate updatedAt;
 

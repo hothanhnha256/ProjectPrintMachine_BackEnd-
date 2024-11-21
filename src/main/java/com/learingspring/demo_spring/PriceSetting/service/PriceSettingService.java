@@ -48,7 +48,7 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
+//@PreAuthorize("hasRole('ADMIN')")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PriceSettingService {
     PriceSettingRepository priceSettingRepository;
@@ -106,5 +106,8 @@ public class PriceSettingService {
                 priceSettingRequest.getPageType());
     }
 
-
+    public Number getPrice(PageType pageType, Boolean color) {
+        if(color) return priceSettingRepository.findPriceByColorTypeAndPageType(ColorType.COLOR, pageType);
+        else return priceSettingRepository.findPriceByColorTypeAndPageType(ColorType.BLACK_WHITE, pageType);
+    }
 }

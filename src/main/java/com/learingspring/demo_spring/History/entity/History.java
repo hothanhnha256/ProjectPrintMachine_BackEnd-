@@ -1,11 +1,10 @@
 package com.learingspring.demo_spring.History.entity;
 
-import com.learingspring.demo_spring.Location.Entity.Location;
+import com.learingspring.demo_spring.enums.PageType;
 import com.learingspring.demo_spring.enums.Process;
 import com.learingspring.demo_spring.File.entity.File;
 import com.learingspring.demo_spring.PrintMachine.entity.PrintMachine;
 import com.learingspring.demo_spring.User.entity.User;
-import com.learingspring.demo_spring.enums.TypeOfPage;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -58,7 +57,7 @@ public class History {
     boolean sideOfPage;  //false is 1 side of page, true is 2 sides of page.
     @JoinColumn(name = "type_of_page")
     @Enumerated(EnumType.STRING)
-    TypeOfPage typeOfPage;
+    PageType typeOfPage;
 
     @JoinColumn(name = "print_color")
     boolean printColor; //false is no, true is yes

@@ -3,6 +3,7 @@ package com.learingspring.demo_spring.User.services;
 import java.util.List;
 
 import com.learingspring.demo_spring.User.dto.request.UserUpdatePasswordRequest;
+import com.learingspring.demo_spring.Wallet.service.WalletService;
 import com.learingspring.demo_spring.enums.Roles;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -37,6 +38,7 @@ public class UserService {
     private UserRepository userRepository;
     private UserMapper userMapper;
     private PasswordEncoder passwordEncoder;
+    private WalletService walletService;
 
     public UserResponse createRequest(UserCreationRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
@@ -49,6 +51,8 @@ public class UserService {
         user.setBalance(0);
 
         try {
+            user = userRepository.save(user);
+            user.setWallet(walletService.createNewWallet(user,0));
             user = userRepository.save(user);
         } catch (DataIntegrityViolationException exception) {
             throw new AppException(ErrorCode.USER_EXISTED);

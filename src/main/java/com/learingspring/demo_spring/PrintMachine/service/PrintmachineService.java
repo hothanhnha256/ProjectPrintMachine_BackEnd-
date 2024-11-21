@@ -4,10 +4,11 @@ import com.learingspring.demo_spring.File.entity.File;
 import com.learingspring.demo_spring.File.service.FileService;
 import com.learingspring.demo_spring.History.entity.History;
 import com.learingspring.demo_spring.History.services.HistoryService;
+import com.learingspring.demo_spring.PriceSetting.service.PriceSettingService;
 import com.learingspring.demo_spring.User.entity.User;
 import com.learingspring.demo_spring.User.services.UserService;
-import com.learingspring.demo_spring.enums.BaseEnum;
-import com.learingspring.demo_spring.enums.BuildingEnum;
+import com.learingspring.demo_spring.Wallet.service.WalletService;
+import com.learingspring.demo_spring.enums.*;
 import com.learingspring.demo_spring.Location.services.LocationService;
 import com.learingspring.demo_spring.PrintMachine.dto.request.PrintingImplementRequest;
 import com.learingspring.demo_spring.PrintMachine.dto.request.PrintmachineCreationRequest;
@@ -16,7 +17,6 @@ import com.learingspring.demo_spring.PrintMachine.dto.response.AvailablePrinters
 import com.learingspring.demo_spring.PrintMachine.entity.PrintMachine;
 import com.learingspring.demo_spring.PrintMachine.repository.PrintmachineRepository;
 import com.learingspring.demo_spring.enums.Process;
-import com.learingspring.demo_spring.enums.TypeOfPage;
 import com.learingspring.demo_spring.exception.ApiResponse;
 import com.learingspring.demo_spring.exception.AppException;
 import com.learingspring.demo_spring.exception.ErrorCode;
@@ -42,6 +42,8 @@ public class PrintmachineService {
     private final UserService userService;
     private final FileService fileService;
     private final HistoryService historyService;
+    private final PriceSettingService priceSettingService;
+    private final WalletService walletService;
 
     // Khởi tạo map để lưu trữ thread của từng máy in
     private final Map<String, Thread> printerThreads = new HashMap<>();
@@ -131,12 +133,19 @@ public class PrintmachineService {
         PrintMachine printMachine = getPrintMachine(request.getIdPrinter());
         int copiesNum = request.getCopiesNum();
         boolean sideOfPage = request.isSideOfPage();
-        TypeOfPage typeOfPage = request.getTypeOfPage();
+        PageType typeOfPage = request.getTypeOfPage();
         boolean printColor = request.isPrintColor();
+
+        ApiResponse<String> result = new ApiResponse<>();
+
+        if(!checkWallet(user,copiesNum,sideOfPage,typeOfPage,printColor)) {
+            result.setCode(401);
+            result.setMessage("User's balance is not enough");
+            return result;
+        }
 
         History history = historyService.logPrinting(user, file, printMachine, copiesNum, sideOfPage, typeOfPage, printColor);
 
-        ApiResponse<String> result = new ApiResponse<>();
         result.setCode(200);
         result.setMessage("Print registration successful");
         result.setResult("Request was Recorded");
@@ -225,7 +234,7 @@ public class PrintmachineService {
     }
 
     private boolean checkInkAndPaperStatus(String ID) {
-        return printmachineRepository.findInkStatusById(ID) > 0 && printmachineRepository.findPaperStatusById(ID) > 0;
+        return printmachineRepository.findInkStatusById(ID) > 0 || printmachineRepository.findPaperStatusById(ID) > 0;
     }
 
     // handle printing in a specified thread
@@ -236,8 +245,8 @@ public class PrintmachineService {
                 throw new AppException(ErrorCode.INVALID_KEY);
             }
             while (!Thread.currentThread().isInterrupted()) {
-                if(!checkInkAndPaperStatus(printerId)){     //Check does it enough Ink and paper for student to use service
-                    System.out.println("Waiting for ink status");
+                if(!checkInkAndPaperStatus(printerId)){     //Check if there is no enough ink and paper then auto turn off the printer
+                    System.out.println("Waiting for ink or paper status");
                     printmachineRepository.updatePrinterStatus(false, printerId);
                     break;
                 }
@@ -320,6 +329,21 @@ public class PrintmachineService {
             // store thread into map
             printerThreads.put(idPrinter, printerThread);
         }
+    }
+
+    private boolean checkWallet(User user, int copiesNum, boolean sideOfPage, PageType typeOfPage, boolean printColor ){
+        Number pricePerPage = priceSettingService.getPrice(typeOfPage, printColor);
+        // Kiểm tra kiểu của pricePerPage và ép kiểu cho phù hợp
+        double pricePerPageDouble = pricePerPage.doubleValue();
+
+        // Giả sử balance của người dùng là số nguyên (hoặc bạn có thể dùng .doubleValue() nếu cần so sánh với double)
+        double userBalance = user.getWallet().getBalance().doubleValue();
+
+        if(userBalance >= pricePerPageDouble){
+            user.setWallet(walletService.payment(pricePerPage));
+            return true;
+        }
+        return false;
     }
 
 }
