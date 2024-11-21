@@ -1,7 +1,7 @@
 package com.learingspring.demo_spring.User.entity;
 
 import java.time.LocalDate;
-import com.learingspring.demo_spring.Wallet.enity.Wallet;
+import com.learingspring.demo_spring.Wallet.entity.Wallet;
 import com.learingspring.demo_spring.customAnotation.email.EmailConstraint;
 import com.learingspring.demo_spring.enums.Roles;
 import jakarta.persistence.*;
@@ -35,16 +35,9 @@ public class User {
     LocalDate birthDate;
 
     @Column(nullable = false)
-    Long capacity;
-
-    Long capacity;
+    Long capacity = 0L;
 
     Roles role;
-
-    @OneToOne
-    @JoinColumn(name = "wallet_id", referencedColumnName = "id")
-    com.learingspring.demo_spring.Wallet.entity.Wallet wallet;
-
     LocalDate createdAt;
     LocalDate updatedAt;
 

@@ -48,7 +48,6 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         user.setRole(Roles.USER);
-        user.setBalance(0);
 
         try {
             user = userRepository.save(user);
@@ -70,7 +69,6 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         user.setRole(Roles.ADMIN);
-        user.setBalance(0);
 
         try {
             user = userRepository.save(user);
