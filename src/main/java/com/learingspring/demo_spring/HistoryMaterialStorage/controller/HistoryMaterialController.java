@@ -17,7 +17,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/HistoryMaterial")
 public class HistoryMaterialController {
-    HistoryMaterialService historyMaterialService;
+
+    private final HistoryMaterialService historyMaterialService;
+
     @GetMapping()
     ApiResponse<Page<HistoryMaterialResponse>> getHistoryMaterial(
             @RequestParam(defaultValue = "0") int page,

@@ -28,6 +28,7 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class HistoryMaterialService {
+
     HistoryMaterialRepository historyMaterialRepository;
     HistoryMaterialMapper historyMaterialMapper;
 

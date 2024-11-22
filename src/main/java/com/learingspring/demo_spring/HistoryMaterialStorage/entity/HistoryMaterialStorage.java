@@ -29,7 +29,7 @@ public class HistoryMaterialStorage {
     @Enumerated(EnumType.STRING)
     MaterialType name;
 
-    Number quantity;
+    Number value;
 
     String description;
 

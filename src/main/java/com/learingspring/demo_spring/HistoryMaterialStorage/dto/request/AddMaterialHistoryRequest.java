@@ -13,7 +13,7 @@ public class AddMaterialHistoryRequest {
 
     MaterialType name;
 
-    Number quantity;
+    Number value;
 
     String description;
 }

@@ -1,6 +1,8 @@
 package com.learingspring.demo_spring.MaterialStorage.service;
 
 
+import com.learingspring.demo_spring.HistoryMaterialStorage.dto.request.AddMaterialHistoryRequest;
+import com.learingspring.demo_spring.HistoryMaterialStorage.service.HistoryMaterialService;
 import com.learingspring.demo_spring.MaterialStorage.dto.request.CreateMaterialRequest;
 import com.learingspring.demo_spring.MaterialStorage.dto.request.AdjustMaterialRequest;
 import com.learingspring.demo_spring.MaterialStorage.dto.request.DeleteMaterialRequest;
@@ -27,6 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class MaterialStorageService {
+    HistoryMaterialService historyMaterialService;
     MaterialStorageRepository materialStorageRepository;
     MaterialStorageMapper materialStorageMapper;
 
@@ -48,9 +51,14 @@ public class MaterialStorageService {
         materialStorage.setName(createMaterialRequest.getName());
         materialStorage.setValue(createMaterialRequest.getValue());
         materialStorage.setDateUpdate(LocalDate.now());
+        materialStorageRepository.save(materialStorage);
 
-        log.info(materialStorage.toString());
-        return materialStorageMapper.toMaterialResponse(materialStorageRepository.save(materialStorage));
+        AddMaterialHistoryRequest addMaterialHistoryRequest=new AddMaterialHistoryRequest();
+        addMaterialHistoryRequest.setName(createMaterialRequest.getName());
+        addMaterialHistoryRequest.setValue(createMaterialRequest.getValue());
+        addMaterialHistoryRequest.setDescription("Add new material to storage "+createMaterialRequest.getName()+" value: "+createMaterialRequest.getValue());
+        historyMaterialService.addHistoryMaterial(addMaterialHistoryRequest);
+        return materialStorageMapper.toMaterialResponse(materialStorage);
     }
 
 
@@ -61,10 +69,22 @@ public class MaterialStorageService {
         MaterialStorage materialStorage = materialStorageRepository.findByName(updateMaterialRequest.getName());
 
 
+
         materialStorage.setValue(materialStorage.getValue().intValue() + updateMaterialRequest.getValue().intValue());
         if (materialStorage.getValue().intValue()<0){
             throw new AppException(ErrorCode.MATERIAL_NOT_ENOUGH);
         }
+
+            AddMaterialHistoryRequest addMaterialHistoryRequest=new AddMaterialHistoryRequest();
+            addMaterialHistoryRequest.setName(updateMaterialRequest.getName());
+            addMaterialHistoryRequest.setValue(updateMaterialRequest.getValue());
+            String a=updateMaterialRequest.getValue().intValue()>0?"Fill":"Use";
+            addMaterialHistoryRequest.setDescription(
+                    a
+                    +" material to storage "+updateMaterialRequest.getName()+" value: "+updateMaterialRequest.getValue());
+
+            historyMaterialService.addHistoryMaterial(addMaterialHistoryRequest);
+
         materialStorage.setDateUpdate(LocalDate.now());
         materialStorageRepository.save(materialStorage);
         return materialStorageMapper.toMaterialResponse(materialStorage);
@@ -75,6 +95,7 @@ public class MaterialStorageService {
             throw new AppException(ErrorCode.MATERIAL_NOT_EXITS);
         }
         materialStorageRepository.delete(materialStorageRepository.findByName(deleteMaterialRequest.getName()));
+
         return "Success delete material: "+ deleteMaterialRequest.getName();
     }
 }

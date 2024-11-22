@@ -9,6 +9,7 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface HistoryMaterialMapper {
+
     HistoryMaterialResponse toHistoryMaterialResponse(HistoryMaterialStorage historyMaterialStorage);
     HistoryMaterialStorage toHistoryMaterialStorage(UseMaterialHistoryRequest useMaterialHistoryRequest);
     HistoryMaterialStorage toHistoryMaterialStorage2(AddMaterialHistoryRequest addMaterialHistoryRequest);

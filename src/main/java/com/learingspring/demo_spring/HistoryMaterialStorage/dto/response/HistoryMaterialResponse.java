@@ -24,7 +24,7 @@ public class HistoryMaterialResponse {
 
     MaterialType name;
 
-    Number quantity;
+    Number value;
 
     String description;
 
