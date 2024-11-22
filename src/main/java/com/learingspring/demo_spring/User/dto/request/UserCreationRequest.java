@@ -23,7 +23,6 @@ public class UserCreationRequest {
     String username;
 
     String mssv;
-
     @Email(message = "")
     @EmailConstraint(message = "INVALID_HCMUT_EMAIL")
     String email;
@@ -31,6 +30,7 @@ public class UserCreationRequest {
     String password;
     String firstName;
     String lastName;
+    Long capacity = 0L;
     @DobConstraint(min = 10, message = "USER_DOB_INVALID")
     LocalDate birthDate;
     Roles role;

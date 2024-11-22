@@ -53,7 +53,9 @@ public class ApplicationInitConfig {
                         .role(Roles.ADMIN)
                         .email("adminadmin@hcmut.edu.vn")
                         .mssv("9999999")
+                        .capacity(0L)
                         .build();
+
 
                 userRepository.save(user);
                 log.warn("admin user has been created with default password: admin, please change it");
