@@ -28,24 +28,19 @@ public class SecurityConfig {
     private CustomJwtDecoder customJwtDecoder;
 
     private static final String[] PUBLIC_ENDPOINTS = {
-        //This is for public url
+            //This is for public url
             "/users",
             "/auth/token",
             "/reportWarranty",
             "/reportWarranty/**",
             "/printers/**",
             "/files/**",
-            "/files",
-            "/settingPrice/**"
+            "/files"
     };
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(request -> request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS)
-                .permitAll()
-                .requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINTS)
-                .permitAll()
-                .requestMatchers(HttpMethod.DELETE, PUBLIC_ENDPOINTS)
                 .permitAll()
                 .anyRequest()
                 .authenticated());
@@ -77,7 +72,7 @@ public class SecurityConfig {
         return source;
     }
     @Bean
-    // cấu hình preFix
+        // cấu hình preFix
     JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");

@@ -9,7 +9,7 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface MaterialStorageMapper {
+
     MaterialStorage toMaterialStorage(CreateMaterialRequest createMaterialRequest);
     MaterialResponse toMaterialResponse(MaterialStorage materialStorage);
-    MaterialStorage toMaterialStorage(AdjustMaterialRequest addMaterialRequest);
 }

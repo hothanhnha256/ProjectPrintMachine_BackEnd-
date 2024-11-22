@@ -27,7 +27,8 @@ public class MaterialStorage {
     @Column(unique = true)
     MaterialType name;
 
-    @Min(0)
+
     Number value;
+
     LocalDate dateUpdate;
 }

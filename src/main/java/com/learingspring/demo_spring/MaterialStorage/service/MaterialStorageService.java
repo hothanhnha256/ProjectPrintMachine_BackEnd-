@@ -10,6 +10,7 @@ import com.learingspring.demo_spring.MaterialStorage.mapper.MaterialStorageMappe
 import com.learingspring.demo_spring.MaterialStorage.repository.MaterialStorageRepository;
 import com.learingspring.demo_spring.exception.AppException;
 import com.learingspring.demo_spring.exception.ErrorCode;
+import jakarta.validation.constraints.Null;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -34,15 +35,27 @@ public class MaterialStorageService {
     }
 
     public MaterialResponse createMaterial(CreateMaterialRequest createMaterialRequest) {
-        if(materialStorageRepository.existsByName(createMaterialRequest.getName())){
+
+        log.info(createMaterialRequest.toString());
+        if(createMaterialRequest.getName()==null) {
+            throw new AppException(ErrorCode.MATERIAL_ERROR);
+        }
+        if(Boolean.TRUE.equals(materialStorageRepository.existsByName(createMaterialRequest.getName()))){
             throw new AppException(ErrorCode.ATTRIBUTE_ALREADY_EXITS);
         }
-        MaterialStorage materialStorage = materialStorageMapper.toMaterialStorage(createMaterialRequest);
-        materialStorageRepository.save(materialStorage);
-        return materialStorageMapper.toMaterialResponse(materialStorage);
+
+        MaterialStorage materialStorage = new MaterialStorage();
+        materialStorage.setName(createMaterialRequest.getName());
+        materialStorage.setValue(createMaterialRequest.getValue());
+        materialStorage.setDateUpdate(LocalDate.now());
+
+        log.info(materialStorage.toString());
+        return materialStorageMapper.toMaterialResponse(materialStorageRepository.save(materialStorage));
     }
+
+
     public MaterialResponse adjustMaterial(AdjustMaterialRequest updateMaterialRequest) {
-        if(!materialStorageRepository.existsByName(updateMaterialRequest.getName())){
+        if(Boolean.FALSE.equals(materialStorageRepository.existsByName(updateMaterialRequest.getName()))){
             throw new AppException(ErrorCode.ATTRIBUTE_NOT_EXITS);
         }
         MaterialStorage materialStorage = materialStorageRepository.findByName(updateMaterialRequest.getName());

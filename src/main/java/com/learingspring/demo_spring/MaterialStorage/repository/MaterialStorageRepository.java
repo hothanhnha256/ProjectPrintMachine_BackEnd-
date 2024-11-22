@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MaterialStorageRepository extends JpaRepository<MaterialStorage, Long> {
 
-    Boolean existsByName(MaterialType materialType);
-    MaterialStorage findByName(MaterialType materialType);
+    Boolean existsByName(MaterialType name);
+
+    MaterialStorage findByName(MaterialType name);
 }

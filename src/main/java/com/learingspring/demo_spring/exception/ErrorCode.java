@@ -39,6 +39,7 @@ public enum ErrorCode {
     //For material storage
     MATERIAL_ALREADY_EXITS(1008,"Material type already exits", HttpStatus.BAD_REQUEST),
     MATERIAL_NOT_EXITS(1008,"Material type not exits", HttpStatus.BAD_REQUEST),
+    MATERIAL_ERROR(1008,"Material should not be null", HttpStatus.BAD_REQUEST),
     MATERIAL_NOT_ENOUGH(1008,"Our storage not enough, please add more material", HttpStatus.BAD_REQUEST),
 
     //For history material storage

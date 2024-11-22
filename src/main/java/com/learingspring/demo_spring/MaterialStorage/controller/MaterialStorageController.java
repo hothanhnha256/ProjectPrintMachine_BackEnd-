@@ -31,7 +31,10 @@ public class MaterialStorageController {
     }
 
     @PostMapping("/createMaterialRequest")
-    ApiResponse<MaterialResponse> createMaterials(CreateMaterialRequest createMaterialRequest) {
+    ApiResponse<MaterialResponse> createMaterials(
+            @RequestBody CreateMaterialRequest createMaterialRequest) {
+
+        log.info(createMaterialRequest.toString());
         return ApiResponse.<MaterialResponse>builder()
                 .code(200)
                 .result(materialStorageService.createMaterial(createMaterialRequest))
@@ -39,14 +42,16 @@ public class MaterialStorageController {
     }
 
     @PostMapping("/addjustMaterialRequest")
-    ApiResponse<MaterialResponse> addMaterials(AdjustMaterialRequest addMaterialRequest) {
+    ApiResponse<MaterialResponse> addMaterials(@RequestBody AdjustMaterialRequest addMaterialRequest) {
         return ApiResponse.<MaterialResponse>builder()
                 .code(200)
                 .result(materialStorageService.adjustMaterial(addMaterialRequest))
                 .build();
     }
+
+
     @DeleteMapping()
-    ApiResponse<String> deleteMaterials(DeleteMaterialRequest deleteMaterialRequest) {
+    ApiResponse<String> deleteMaterials(@RequestBody DeleteMaterialRequest deleteMaterialRequest) {
         return ApiResponse.<String>builder()
                 .code(200)
                 .result(materialStorageService.deleteMaterial(deleteMaterialRequest))
