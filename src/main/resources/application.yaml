@@ -16,3 +16,13 @@ jwt:
   signerKey: "CDLTHzPElpVbye7QsmKoyj69gazLoxcy7o6oP+VdGzsjA8VK/rc8N8m7Er8Gib02"
   valid-duration: 3600 #second
   refreshable-duration: 360000 #second
+
+payment:
+  vnPay:
+    url: ${PAY_URL}
+    tmnCode: ${TMN_CODE}
+    secretKey: ${SECRET_KEY}
+    returnUrl: ${RETURN_URL}
+    version: ${VERSION}
+    command: ${COMMAND}
+    orderType: ${ORDER_TYPE}
