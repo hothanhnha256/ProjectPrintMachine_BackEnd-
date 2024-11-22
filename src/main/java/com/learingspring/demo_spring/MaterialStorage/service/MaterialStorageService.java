@@ -41,7 +41,7 @@ public class MaterialStorageService {
             throw new AppException(ErrorCode.MATERIAL_ERROR);
         }
         if(Boolean.TRUE.equals(materialStorageRepository.existsByName(createMaterialRequest.getName()))){
-            throw new AppException(ErrorCode.ATTRIBUTE_ALREADY_EXITS);
+            throw new AppException(ErrorCode.MATERIAL_ALREADY_EXITS);
         }
 
         MaterialStorage materialStorage = new MaterialStorage();
@@ -56,7 +56,7 @@ public class MaterialStorageService {
 
     public MaterialResponse adjustMaterial(AdjustMaterialRequest updateMaterialRequest) {
         if(Boolean.FALSE.equals(materialStorageRepository.existsByName(updateMaterialRequest.getName()))){
-            throw new AppException(ErrorCode.ATTRIBUTE_NOT_EXITS);
+            throw new AppException(ErrorCode.MATERIAL_NOT_EXITS);
         }
         MaterialStorage materialStorage = materialStorageRepository.findByName(updateMaterialRequest.getName());
 
@@ -70,8 +70,8 @@ public class MaterialStorageService {
     }
 
     public String deleteMaterial(DeleteMaterialRequest deleteMaterialRequest) {
-        if(!materialStorageRepository.existsByName(deleteMaterialRequest.getName())){
-            throw new AppException(ErrorCode.ATTRIBUTE_NOT_EXITS);
+        if(Boolean.FALSE.equals(materialStorageRepository.existsByName(deleteMaterialRequest.getName()))){
+            throw new AppException(ErrorCode.MATERIAL_NOT_EXITS);
         }
         materialStorageRepository.delete(materialStorageRepository.findByName(deleteMaterialRequest.getName()));
         return "Success delete material: "+ deleteMaterialRequest.getName();
