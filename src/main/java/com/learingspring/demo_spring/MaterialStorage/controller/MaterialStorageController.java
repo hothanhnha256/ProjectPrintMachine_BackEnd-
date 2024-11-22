@@ -34,7 +34,6 @@ public class MaterialStorageController {
     ApiResponse<MaterialResponse> createMaterials(
             @RequestBody CreateMaterialRequest createMaterialRequest) {
 
-        log.info(createMaterialRequest.toString());
         return ApiResponse.<MaterialResponse>builder()
                 .code(200)
                 .result(materialStorageService.createMaterial(createMaterialRequest))

@@ -1,5 +1,6 @@
 package com.learingspring.demo_spring.PrintMachine.controller;
 
+import com.learingspring.demo_spring.PrintMachine.dto.request.AddMaterialRequest;
 import com.learingspring.demo_spring.PrintMachine.dto.request.PrintingImplementRequest;
 import com.learingspring.demo_spring.PrintMachine.dto.request.PrintmachineCreationRequest;
 import com.learingspring.demo_spring.PrintMachine.dto.response.AvailablePrintersResponse;
@@ -7,6 +8,7 @@ import com.learingspring.demo_spring.PrintMachine.entity.PrintMachine;
 import com.learingspring.demo_spring.PrintMachine.service.PrintmachineService;
 import com.learingspring.demo_spring.exception.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.simpleframework.xml.core.Validate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -54,6 +56,11 @@ public class PrintmachineController {
     @DeleteMapping("/delete-printer")
     ApiResponse<Void> deletePrint(@RequestParam String id){
         return printmachineService.deletePrintMachine(id);
+    }
+
+    @PostMapping("/add-material")
+    ApiResponse<String> addMaterial(@RequestBody @Validate AddMaterialRequest request){
+        return printmachineService.addMaterialtoPrinter(request);
     }
 
 }

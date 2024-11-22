@@ -1,9 +1,6 @@
-package com.learingspring.demo_spring.MaterialStorage.dto.request;
+package com.learingspring.demo_spring.PrintMachine.dto.request;
 
 import com.learingspring.demo_spring.enums.MaterialType;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Min;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -13,7 +10,11 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CreateMaterialRequest {
-    MaterialType name;
-    Long value;
+public class AddMaterialRequest {
+    String printerId;
+
+    MaterialType materialType;
+
+    @Min(1)
+    Long amount;
 }

@@ -23,8 +23,14 @@ public class PrintmachineCreationRequest {
     String building;
     int floor;
 
-    String inkStatus;
-    Integer paperStatus;
+    int blackWhiteInkStatus;
+    int colorInkStatus;
+    int a0paperStatus;
+    int a1paperStatus;
+    int a2paperStatus;
+    int a3paperStatus;
+    int a4paperStatus;
+    int a5paperStatus;
     Integer capacity;
     Integer printWaiting;
 
