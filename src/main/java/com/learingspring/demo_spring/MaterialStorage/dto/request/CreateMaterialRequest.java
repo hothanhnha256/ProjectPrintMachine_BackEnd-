@@ -15,5 +15,5 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreateMaterialRequest {
     MaterialType name;
-    Long value;
+    Number value;
 }

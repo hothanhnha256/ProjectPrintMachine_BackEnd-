@@ -44,6 +44,8 @@ public class PrintMachine {
     int a4paperStatus;
     int a5paperStatus;
     int capacity;
+
+
     @JoinColumn(name = "printWaiting")
     Integer printWaiting;
 

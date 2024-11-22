@@ -17,7 +17,7 @@ public class MaterialResponse {
 
     MaterialType name;
 
-    Long value;
+    Number value;
 
     LocalDate dateUpdate;
 }

@@ -12,5 +12,5 @@ import lombok.experimental.FieldDefaults;
 public class AdjustMaterialRequest {
 
     MaterialType name;
-    Long value;
+    Number value;
 }

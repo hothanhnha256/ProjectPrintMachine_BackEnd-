@@ -27,8 +27,7 @@ public class MaterialStorage {
     @Column(unique = true)
     MaterialType name;
 
-    @Min(0)
-    @Column(nullable = false)
-    Long value;  // Hoặc Integer nếu bạn chỉ muốn lưu số nguyên nhỏ hơn
+    Number value;  // Hoặc Integer nếu bạn chỉ muốn lưu số nguyên nhỏ hơn
+
     LocalDate dateUpdate;
 }

@@ -60,7 +60,8 @@ public class MaterialStorageService {
         }
         MaterialStorage materialStorage = materialStorageRepository.findByName(updateMaterialRequest.getName());
 
-        materialStorage.setValue(materialStorage.getValue() + updateMaterialRequest.getValue());
+
+        materialStorage.setValue(materialStorage.getValue().intValue() + updateMaterialRequest.getValue().intValue());
         if (materialStorage.getValue().intValue()<0){
             throw new AppException(ErrorCode.MATERIAL_NOT_ENOUGH);
         }

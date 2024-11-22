@@ -442,13 +442,13 @@ public class PrintmachineService {
 
     private void checkAndAllocateResources(PrintmachineCreationRequest request) {
         adjustMaterial(MaterialType.BLACK_WHITE_INK, (long)request.getBlackWhiteInkStatus());
-        adjustMaterial(MaterialType.COLOR_INK, (long) request.getColorInkStatus());
-        adjustMaterial(MaterialType.A0Pages, (long)request.getA0paperStatus());
-        adjustMaterial(MaterialType.A1Pages, (long)request.getA1paperStatus());
-        adjustMaterial(MaterialType.A2Pages, (long)request.getA2paperStatus());
-        adjustMaterial(MaterialType.A3Pages, (long)request.getA3paperStatus());
-        adjustMaterial(MaterialType.A4Pages, (long)request.getA4paperStatus());
-        adjustMaterial(MaterialType.A5Pages, (long)request.getA5paperStatus());
+        adjustMaterial(MaterialType.COLOR_INK, (long)request.getColorInkStatus());
+        adjustMaterial(MaterialType.A0Page, (long)request.getA0paperStatus());
+        adjustMaterial(MaterialType.A1Page, (long)request.getA1paperStatus());
+        adjustMaterial(MaterialType.A2Page, (long)request.getA2paperStatus());
+        adjustMaterial(MaterialType.A3Page, (long)request.getA3paperStatus());
+        adjustMaterial(MaterialType.A4Page, (long)request.getA4paperStatus());
+        adjustMaterial(MaterialType.A5Page, (long)request.getA5paperStatus());
     }
 
     private void adjustMaterial(MaterialType materialType, Long requiredAmount) {
@@ -468,22 +468,22 @@ public class PrintmachineService {
             case COLOR_INK -> printer.setColorInkStatus(
                     printer.getColorInkStatus() + amount.intValue()
             );
-            case A0Pages -> printer.setA0paperStatus(
+            case A0Page -> printer.setA0paperStatus(
                     printer.getA0paperStatus() + amount.intValue()
             );
-            case A1Pages -> printer.setA1paperStatus(
+            case A1Page -> printer.setA1paperStatus(
                     printer.getA1paperStatus() + amount.intValue()
             );
-            case A2Pages -> printer.setA2paperStatus(
+            case A2Page -> printer.setA2paperStatus(
                     printer.getA2paperStatus() + amount.intValue()
             );
-            case A3Pages -> printer.setA3paperStatus(
+            case A3Page -> printer.setA3paperStatus(
                     printer.getA3paperStatus() + amount.intValue()
             );
-            case A4Pages -> printer.setA4paperStatus(
+            case A4Page -> printer.setA4paperStatus(
                     printer.getA4paperStatus() + amount.intValue()
             );
-            case A5Pages -> printer.setA5paperStatus(
+            case A5Page -> printer.setA5paperStatus(
                     printer.getA5paperStatus() + amount.intValue()
             );
             default -> throw new AppException(ErrorCode.INVALID_MATERIAL_TYPE);
