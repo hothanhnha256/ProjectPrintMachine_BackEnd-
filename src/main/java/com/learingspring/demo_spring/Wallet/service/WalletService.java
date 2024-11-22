@@ -26,8 +26,7 @@ public class WalletService {
     WalletRepository walletRepository;
     WalletMapper walletMapper;
     UserRepository userRepository;
-
-    //    @PostAuthorize("returnObject.username == authentication.name")
+    
     public WalletResponse getMyBalance() {
         log.info("getting wallet balance");
 
@@ -61,7 +60,7 @@ public class WalletService {
         walletRepository.save(wallet);
         return walletMapper.toWalletResponse(wallet);
     }
-
+    
     public Wallet createNewWallet(User user,Number balance) {
         log.info("Creating new wallet");
         Wallet wallet = new Wallet();
