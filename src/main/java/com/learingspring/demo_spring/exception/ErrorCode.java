@@ -36,6 +36,10 @@ public enum ErrorCode {
     ATTRIBUTE_ALREADY_EXITS(1007, "Price for this attribute is already exits", HttpStatus.BAD_REQUEST),
     ATTRIBUTE_NOT_EXITS(1007, "Price for this attribute is not exits", HttpStatus.BAD_REQUEST),
 
+    PRINT_MACHINE_NOT_FOUND(1013, "Print machine not found", HttpStatus.NOT_FOUND),
+
+    INVALID_MATERIAL_TYPE(1009, "Invalid Material type", HttpStatus.BAD_REQUEST),
+
     //For material storage
     MATERIAL_ALREADY_EXITS(1008,"Material type already exits", HttpStatus.BAD_REQUEST),
     MATERIAL_NOT_EXITS(1008,"Material type not exits", HttpStatus.BAD_REQUEST),

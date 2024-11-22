@@ -4,7 +4,10 @@ import com.learingspring.demo_spring.File.entity.File;
 import com.learingspring.demo_spring.File.service.FileService;
 import com.learingspring.demo_spring.History.entity.History;
 import com.learingspring.demo_spring.History.services.HistoryService;
+import com.learingspring.demo_spring.MaterialStorage.dto.request.AdjustMaterialRequest;
+import com.learingspring.demo_spring.MaterialStorage.service.MaterialStorageService;
 import com.learingspring.demo_spring.PriceSetting.service.PriceSettingService;
+import com.learingspring.demo_spring.PrintMachine.dto.request.AddMaterialRequest;
 import com.learingspring.demo_spring.User.entity.User;
 import com.learingspring.demo_spring.User.services.UserService;
 import com.learingspring.demo_spring.Wallet.service.WalletService;
@@ -44,6 +47,7 @@ public class PrintmachineService {
     private final HistoryService historyService;
     private final PriceSettingService priceSettingService;
     private final WalletService walletService;
+    private final MaterialStorageService materialStorageService;
 
     // Khởi tạo map để lưu trữ thread của từng máy in
     private final Map<String, Thread> printerThreads = new HashMap<>();
@@ -59,14 +63,23 @@ public class PrintmachineService {
 
         Location location = locationService.findLocationByBaseBuildingFloor(base, building, floor);
 
+        // Check Material Storage
+        checkAndAllocateResources(request);
+
         printer.setName(request.getName());
         printer.setManufacturer(request.getManufacturer());
         printer.setModel(request.getModel());
         printer.setDescription(request.getDescription());
         printer.setAddress(location);
 
-        printer.setInkStatus(100);
-        printer.setPaperStatus(request.getPaperStatus());
+        printer.setBlackWhiteInkStatus(request.getBlackWhiteInkStatus());
+        printer.setColorInkStatus(request.getColorInkStatus());
+        printer.setA0paperStatus(request.getA0paperStatus());
+        printer.setA1paperStatus(request.getA1paperStatus());
+        printer.setA2paperStatus(request.getA2paperStatus());
+        printer.setA3paperStatus(request.getA3paperStatus());
+        printer.setA4paperStatus(request.getA4paperStatus());
+        printer.setA5paperStatus(request.getA5paperStatus());
         printer.setCapacity(request.getCapacity());
         printer.setPrintWaiting(0);
 
@@ -206,6 +219,30 @@ public class PrintmachineService {
         return response;
     }
 
+    public ApiResponse<String> addMaterialtoPrinter(AddMaterialRequest request) {
+        // Kiểm tra máy in có tồn tại không
+        PrintMachine printer = printmachineRepository.findById(request.getPrinterId())
+                .orElseThrow(() -> new AppException(ErrorCode.PRINT_MACHINE_NOT_FOUND));
+
+        // Điều chỉnh tài nguyên trong kho
+        AdjustMaterialRequest adjustMaterialRequest = new AdjustMaterialRequest(
+                request.getMaterialType(),
+                -request.getAmount() // Lấy tài nguyên từ kho, giá trị âm
+        );
+
+        materialStorageService.adjustMaterial(adjustMaterialRequest);
+
+        // Cập nhật tài nguyên của máy in
+        updatePrinterResource(printer, request.getMaterialType(), request.getAmount());
+        printmachineRepository.save(printer);
+
+        ApiResponse<String> result = new ApiResponse<>();
+        result.setCode(200);
+        result.setResult("Material add successfully!");
+
+        return result;
+    }
+
     //-------------------------------------------Utilization tool-------------------------------------------------------
 
 
@@ -233,8 +270,26 @@ public class PrintmachineService {
         return printmachineRepository.findStatusById(ID);
     }
 
-    private boolean checkInkAndPaperStatus(String ID) {
-        return printmachineRepository.findInkStatusById(ID) > 0 || printmachineRepository.findPaperStatusById(ID) > 0;
+    private boolean checkInkAndPaperStatus(String printerId, boolean printColor, PageType pageType, int copiesNum) {
+        // Kiểm tra mực
+        int inkStatus = printColor
+                ? printmachineRepository.findColorInkStatusById(printerId)
+                : printmachineRepository.findBlackWhiteInkStatusById(printerId);
+        if (inkStatus < copiesNum) {
+            return false; // Không đủ mực
+        }
+
+        // Kiểm tra giấy
+        int paperStatus = switch (pageType) {
+            case A0Page -> printmachineRepository.findA0PaperStatusById(printerId);
+            case A1Page -> printmachineRepository.findA1PaperStatusById(printerId);
+            case A2Page -> printmachineRepository.findA2PaperStatusById(printerId);
+            case A3Page -> printmachineRepository.findA3PaperStatusById(printerId);
+            case A4Page -> printmachineRepository.findA4PaperStatusById(printerId);
+            case A5Page -> printmachineRepository.findA5PaperStatusById(printerId);
+        };
+
+        return paperStatus >= copiesNum; // Chỉ trả về true nếu đủ cả mực và giấy
     }
 
     // handle printing in a specified thread
@@ -245,13 +300,15 @@ public class PrintmachineService {
                 throw new AppException(ErrorCode.INVALID_KEY);
             }
             while (!Thread.currentThread().isInterrupted()) {
-                if(!checkInkAndPaperStatus(printerId)){     //Check if there is no enough ink and paper then auto turn off the printer
+                History request = queue.peek(); // Lấy yêu cầu mà không xóa khỏi hàng đợi
+
+                if(request != null && !checkInkAndPaperStatus(printerId, request.isPrintColor(), request.getTypeOfPage(),request.getCopiesNum())){     //Check if there is no enough ink and paper then auto turn off the printer
                     System.out.println("Waiting for ink or paper status");
                     printmachineRepository.updatePrinterStatus(false, printerId);
                     break;
                 }
                 if(!getStatus(printerId)) break;
-                History request = queue.take();
+                request = queue.take();
                 performPrinting(request, printerId);
             }
         } catch (InterruptedException e) {
@@ -270,9 +327,9 @@ public class PrintmachineService {
         try {
             historyService.updateProcess(id, Process.Implementing);
             // Giả lập time in: làm cho thread "stop" 10 seconds
-            printmachineRepository.updatePrintMachine(1,1, 0, printerId);
+            processPrintRequest(printerId, request.isPrintColor(), request.getTypeOfPage(), request.getCopiesNum(),0);
             Thread.sleep(20000);  // 20000 milliseconds = 20 second
-            printmachineRepository.updatePrintMachine(0,0, -1, printerId);
+            processPrintRequest(printerId, request.isPrintColor(), request.getTypeOfPage(), 0,-1);
             historyService.updateProcess(id, Process.Completed);
             System.out.println("Printing job completed successfully.");
         } catch (InterruptedException e) {
@@ -295,7 +352,7 @@ public class PrintmachineService {
             }
             try {
                 queue.put(request);  // add job into queue
-                printmachineRepository.updatePrintMachine(0,0, 1, printerId);
+                processPrintRequest(printerId, request.isPrintColor(), request.getTypeOfPage(), 0,1);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
@@ -334,7 +391,7 @@ public class PrintmachineService {
     private boolean checkWallet(User user, int copiesNum, boolean sideOfPage, PageType typeOfPage, boolean printColor ){
         Number pricePerPage = priceSettingService.getPrice(typeOfPage, printColor);
         // Kiểm tra kiểu của pricePerPage và ép kiểu cho phù hợp
-        double pricePerPageDouble = pricePerPage.doubleValue();
+        double pricePerPageDouble = pricePerPage.doubleValue() * copiesNum;
 
         // Giả sử balance của người dùng là số nguyên (hoặc bạn có thể dùng .doubleValue() nếu cần so sánh với double)
         double userBalance = user.getWallet().getBalance().doubleValue();
@@ -346,6 +403,92 @@ public class PrintmachineService {
         return false;
     }
 
+    private void processPrintRequest(String machineId, boolean printColor, PageType typeOfPage, int copiesNum, int printWait) {
+        // Initialize all values to 0
+        int blackWhiteInkStatus = 0;
+        int colorInkStatus = 0;
+        int a0paperStatus = 0;
+        int a1paperStatus = 0;
+        int a2paperStatus = 0;
+        int a3paperStatus = 0;
+        int a4paperStatus = 0;
+        int a5paperStatus = 0;
+        int printWaiting = printWait;
+
+        // Adjust values based on PageType
+        switch (typeOfPage) {
+            case A0Page -> a0paperStatus = copiesNum;
+            case A1Page -> a1paperStatus = copiesNum;
+            case A2Page -> a2paperStatus = copiesNum;
+            case A3Page -> a3paperStatus = copiesNum;
+            case A4Page -> a4paperStatus = copiesNum;
+            case A5Page -> a5paperStatus = copiesNum;
+        }
+
+        // Adjust ink usage
+        if (printColor) {
+            colorInkStatus = copiesNum;
+        } else {
+            blackWhiteInkStatus = copiesNum;
+        }
+
+        // Call the repository method to update
+        printmachineRepository.updatePrintMachine(
+                blackWhiteInkStatus, colorInkStatus, a0paperStatus, a1paperStatus,
+                a2paperStatus, a3paperStatus, a4paperStatus, a5paperStatus,
+                printWaiting, machineId
+        );
+    }
+
+    private void checkAndAllocateResources(PrintmachineCreationRequest request) {
+        adjustMaterial(MaterialType.BLACK_WHITE_INK, (long)request.getBlackWhiteInkStatus());
+        adjustMaterial(MaterialType.COLOR_INK, (long) request.getColorInkStatus());
+        adjustMaterial(MaterialType.A0Pages, (long)request.getA0paperStatus());
+        adjustMaterial(MaterialType.A1Pages, (long)request.getA1paperStatus());
+        adjustMaterial(MaterialType.A2Pages, (long)request.getA2paperStatus());
+        adjustMaterial(MaterialType.A3Pages, (long)request.getA3paperStatus());
+        adjustMaterial(MaterialType.A4Pages, (long)request.getA4paperStatus());
+        adjustMaterial(MaterialType.A5Pages, (long)request.getA5paperStatus());
+    }
+
+    private void adjustMaterial(MaterialType materialType, Long requiredAmount) {
+        if (requiredAmount == null || requiredAmount <= 0) {
+            return;
+        }
+
+        AdjustMaterialRequest adjustRequest = new AdjustMaterialRequest(materialType, -requiredAmount);
+        materialStorageService.adjustMaterial(adjustRequest);
+    }
+
+    private void updatePrinterResource(PrintMachine printer, MaterialType materialType, Long amount) {
+        switch (materialType) {
+            case BLACK_WHITE_INK -> printer.setBlackWhiteInkStatus(
+                    printer.getBlackWhiteInkStatus() + amount.intValue()
+            );
+            case COLOR_INK -> printer.setColorInkStatus(
+                    printer.getColorInkStatus() + amount.intValue()
+            );
+            case A0Pages -> printer.setA0paperStatus(
+                    printer.getA0paperStatus() + amount.intValue()
+            );
+            case A1Pages -> printer.setA1paperStatus(
+                    printer.getA1paperStatus() + amount.intValue()
+            );
+            case A2Pages -> printer.setA2paperStatus(
+                    printer.getA2paperStatus() + amount.intValue()
+            );
+            case A3Pages -> printer.setA3paperStatus(
+                    printer.getA3paperStatus() + amount.intValue()
+            );
+            case A4Pages -> printer.setA4paperStatus(
+                    printer.getA4paperStatus() + amount.intValue()
+            );
+            case A5Pages -> printer.setA5paperStatus(
+                    printer.getA5paperStatus() + amount.intValue()
+            );
+            default -> throw new AppException(ErrorCode.INVALID_MATERIAL_TYPE);
+        }
+    }
 }
 
 

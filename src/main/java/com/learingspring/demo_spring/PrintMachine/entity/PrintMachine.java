@@ -35,9 +35,15 @@ public class PrintMachine {
     Location address;
 
     //Status
-    int inkStatus;
-    Integer paperStatus;
-    Integer capacity;
+    int blackWhiteInkStatus;
+    int colorInkStatus;
+    int a0paperStatus;
+    int a1paperStatus;
+    int a2paperStatus;
+    int a3paperStatus;
+    int a4paperStatus;
+    int a5paperStatus;
+    int capacity;
     @JoinColumn(name = "printWaiting")
     Integer printWaiting;
 

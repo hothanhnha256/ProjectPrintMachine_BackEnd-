@@ -31,7 +31,7 @@ public class MaterialStorageController {
     }
 
     @PostMapping("/createMaterialRequest")
-    ApiResponse<MaterialResponse> createMaterials(CreateMaterialRequest createMaterialRequest) {
+    ApiResponse<MaterialResponse> createMaterials(@RequestBody CreateMaterialRequest createMaterialRequest) {
         return ApiResponse.<MaterialResponse>builder()
                 .code(200)
                 .result(materialStorageService.createMaterial(createMaterialRequest))
