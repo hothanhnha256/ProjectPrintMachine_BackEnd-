@@ -1,6 +1,7 @@
 package com.learingspring.demo_spring.File.service;
 
 import com.learingspring.demo_spring.File.dto.request.FileAdjustRequest;
+import com.learingspring.demo_spring.File.dto.request.FileIDRequest;
 import com.learingspring.demo_spring.File.dto.response.FileResponse;
 import com.learingspring.demo_spring.File.entity.File;
 import com.learingspring.demo_spring.File.repository.FileRepository;
@@ -70,8 +71,10 @@ public class FileService {
         return toFileResponse(file);
     }
 
-    public FileResponse getFile(String id) {
+    public FileResponse getFile(FileIDRequest request) {
         log.info("Inside getFile method");
+
+        String id = request.getId();
 
         File file = fileRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.FILE_NOT_FOUND));
         return toFileResponse(file);
@@ -93,8 +96,10 @@ public class FileService {
                 .map(this::toFileResponse);
     }
 
-    public FileResponse deleteFile(String id) {
+    public FileResponse deleteFile(FileIDRequest request) {
         log.info("Inside deleteFile method");
+
+        String id = request.getId();
 
         File file = fileRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.FILE_NOT_FOUND));
@@ -103,8 +108,10 @@ public class FileService {
         return toFileResponse(file);
     }
 
-    public FileResponse adjustFile(String fileId,FileAdjustRequest request){
+    public FileResponse adjustFile(FileAdjustRequest request){
         log.info("Inside adjustFile method");
+
+        String fileId = request.getId();
 
         File file = fileRepository.findById(fileId)
                 .orElseThrow(() -> new AppException(ErrorCode.FILE_NOT_FOUND));
