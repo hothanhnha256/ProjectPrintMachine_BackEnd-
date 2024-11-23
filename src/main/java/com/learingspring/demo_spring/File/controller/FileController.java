@@ -1,6 +1,7 @@
 package com.learingspring.demo_spring.File.controller;
 
 import com.learingspring.demo_spring.File.dto.request.FileAdjustRequest;
+import com.learingspring.demo_spring.File.dto.request.FileIDRequest;
 import com.learingspring.demo_spring.File.dto.response.FileResponse;
 import com.learingspring.demo_spring.File.service.FileService;
 import com.learingspring.demo_spring.exception.ApiResponse;
@@ -17,16 +18,18 @@ import java.util.List;
 @RequestMapping("/files")
 @Slf4j
 public class FileController {
-    @Autowired
-    private FileService fileService;
+    private final FileService fileService;
+
+    public FileController(FileService fileService) {
+        this.fileService = fileService;
+    }
 
 
-
-    @GetMapping("/{id}")
-    public ApiResponse<FileResponse> getFile(@PathVariable("id") String id) {
+    @GetMapping("/get-file")
+    public ApiResponse<FileResponse> getFile(@RequestBody FileIDRequest request) {
         ApiResponse<FileResponse> apiResponse = new ApiResponse<>();
         apiResponse.setCode(200);
-        apiResponse.setResult(fileService.getFile(id));
+        apiResponse.setResult(fileService.getFile(request));
         return apiResponse;
     }
 
@@ -47,19 +50,19 @@ public class FileController {
         return apiResponse;
     }
 
-    @PutMapping("/{id}")
-    public ApiResponse<FileResponse> adjustFile(@PathVariable("id") String id, @RequestBody FileAdjustRequest request) {
+    @PutMapping("/update")
+    public ApiResponse<FileResponse> adjustFile(@RequestBody FileAdjustRequest request) {
         ApiResponse<FileResponse> apiResponse = new ApiResponse<>();
         apiResponse.setCode(200);
-        apiResponse.setResult(fileService.adjustFile(id, request));
+        apiResponse.setResult(fileService.adjustFile(request));
         return apiResponse;
     }
 
-    @DeleteMapping("/{id}")
-    public ApiResponse<FileResponse> deleteFile(@PathVariable("id") String id) {
+    @DeleteMapping("/delete")
+    public ApiResponse<FileResponse> deleteFile(@RequestBody FileIDRequest request) {
         ApiResponse<FileResponse> apiResponse = new ApiResponse<>();
         apiResponse.setCode(200);
-        apiResponse.setResult(fileService.deleteFile(id));
+        apiResponse.setResult(fileService.deleteFile(request));
         return apiResponse;
     }
 }
