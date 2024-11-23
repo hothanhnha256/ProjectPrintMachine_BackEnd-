@@ -54,6 +54,7 @@ public class UserService {
 
         walletRepository.save(wallet);
         user.setWallet(wallet);
+        user.setCapacity(0L);
 
         user.setRole(Roles.USER);
         try {

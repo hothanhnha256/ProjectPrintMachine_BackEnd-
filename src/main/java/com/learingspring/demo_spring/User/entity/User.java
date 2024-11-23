@@ -34,7 +34,7 @@ public class User {
     String lastName;
     LocalDate birthDate;
 
-    @Column(nullable = false)
+
     Long capacity;
 
     Roles role;

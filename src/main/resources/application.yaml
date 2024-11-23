@@ -19,10 +19,10 @@ jwt:
 
 payment:
   vnPay:
-    url: ${PAY_URL}
-    tmnCode: ${TMN_CODE}
-    secretKey: ${SECRET_KEY}
-    returnUrl: ${RETURN_URL}
-    version: ${VERSION}
-    command: ${COMMAND}
-    orderType: ${ORDER_TYPE}
+    url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+    tmnCode: M3BP8ILX
+    secretKey: WAXAVACIZ495B9IKG7JVGYMFE4JQAPM7
+    returnUrl: http://localhost:8080/wallet/vn-pay-call-back
+    version: 2.1.0
+    command: pay
+    orderType: other

@@ -1,18 +1,14 @@
 package com.learingspring.demo_spring.Wallet.controller;
 
-import com.learingspring.demo_spring.Wallet.dto.request.TopUpRequest;
-import com.learingspring.demo_spring.Wallet.dto.request.VNPayReturnRequest;
 import com.learingspring.demo_spring.Wallet.dto.request.WalletAddBalanceRequest;
 import com.learingspring.demo_spring.Wallet.dto.response.TopUpResponse;
-import com.learingspring.demo_spring.Wallet.dto.response.VNPayResponse;
 import com.learingspring.demo_spring.Wallet.dto.response.WalletResponse;
 import com.learingspring.demo_spring.Wallet.service.VNPayService;
 import com.learingspring.demo_spring.Wallet.service.WalletService;
 import com.learingspring.demo_spring.exception.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/wallet")
@@ -43,29 +39,30 @@ public class WalletController{
                 .result(walletService.getMyBalance())
                 .build();
     }
-    @PostMapping("/topup")
-    public ApiResponse<TopUpResponse> topUpWallet(@RequestBody TopUpRequest request) {
+
+    @GetMapping("/vn-pay")
+    public ApiResponse<TopUpResponse> topUp(HttpServletRequest request) {
+        log.info("Top up wallet");
         return ApiResponse.<TopUpResponse>builder()
                 .code(200)
-                .result(vnPayService.createPaymentUrl(request))
+                .result(new TopUpResponse(vnPayService.createPaymentUrl(request)))
                 .build();
     }
 
-    @PostMapping("/vnpay/return")
-    public ApiResponse<VNPayResponse> handleVNPayReturn(@RequestBody VNPayReturnRequest vnpayReturnRequest) {
-        boolean isValid = vnPayService.verifyPayment(vnpayReturnRequest.getVnpayResponse());
-        if (isValid) {
-            String userId = vnpayReturnRequest.getVnpayResponse().get("vnp_OrderInfo").split(": ")[1];
-            BigDecimal amount = new BigDecimal(vnpayReturnRequest.getVnpayResponse().get("vnp_Amount")).divide(BigDecimal.valueOf(100));
-            walletService.topUpWallet(userId, amount);
-            return ApiResponse.<VNPayResponse>builder()
+    @GetMapping("/vn-pay-call-back")
+    public ApiResponse<TopUpResponse> payCallbackHandler(HttpServletRequest request) {
+        log.info("Handling payment callback");
+        String status = request.getParameter("vnp_ResponseCode");
+        if (status.equals("00")) {
+            walletService.topUpWallet(VNPayService.userId, VNPayService.amountWallet);
+            return ApiResponse.<TopUpResponse>builder()
                     .code(200)
-                    .result(VNPayResponse.builder().message("Payment success").build())
+                    .result(new TopUpResponse("00"))
                     .build();
         } else {
-            return ApiResponse.<VNPayResponse>builder()
+            return ApiResponse.<TopUpResponse>builder()
                     .code(400)
-                    .result(VNPayResponse.builder().message("Payment failed").build())
+                    .result(new TopUpResponse("Failed"))
                     .build();
         }
     }
