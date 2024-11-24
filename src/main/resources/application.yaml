@@ -18,3 +18,14 @@ jwt:
   signerKey: "/OMSdnoPis5/iOGhhaYJcZYJZVg/GGyBNwFY7roCuir6AnYbG4PnRioUoBdgUmSC"
   valid-duration: 36000000000 # second
   refreshable-duration: 3600000000 # second
+
+
+payment:
+  vnPay:
+    url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+    tmnCode: M3BP8ILX
+    secretKey: WAXAVACIZ495B9IKG7JVGYMFE4JQAPM7
+    returnUrl: http://localhost:8080/wallet/vn-pay-call-back
+    version: 2.1.0
+    command: pay
+    orderType: other
