@@ -42,25 +42,6 @@ public class WalletService {
         return walletMapper.toWalletResponse(wallet);
     }
 
-
-    public WalletResponse addBalance(WalletAddBalanceRequest request) {
-        log.info("Adding balance to wallet");
-
-        var context = SecurityContextHolder.getContext();
-
-        String name = context.getAuthentication().getName();
-        User finduser = userRepository.findByUsername(name).orElseThrow(()
-                -> new AppException(ErrorCode.USER_EXISTED));
-
-        Wallet wallet = walletRepository.findById(finduser.getWallet().getId())
-                .orElseThrow(() -> new AppException(ErrorCode.INVALID_WALLET));
-
-        wallet.setBalance(wallet.getBalance().doubleValue() + request.getAmount().doubleValue());
-        wallet.setUpdatedAt(LocalDate.now());
-        walletRepository.save(wallet);
-        return walletMapper.toWalletResponse(wallet);
-    }
-    
     public Wallet createNewWallet(User user,Number balance) {
         log.info("Creating new wallet");
         Wallet wallet = new Wallet();
@@ -92,6 +73,7 @@ public class WalletService {
                 -> new AppException(ErrorCode.USER_EXISTED));
         Wallet wallet = user.getWallet();
         wallet.setBalance(wallet.getBalance().doubleValue() + amount.doubleValue());
+        wallet.setUpdatedAt(LocalDate.now());
         walletRepository.save(wallet);
     }
 }

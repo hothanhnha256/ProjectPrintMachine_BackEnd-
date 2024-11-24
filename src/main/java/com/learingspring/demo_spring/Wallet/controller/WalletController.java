@@ -22,15 +22,6 @@ public class WalletController{
         this.vnPayService = vnPayService;
     }
 
-    @PostMapping("/add-balance")
-    public ApiResponse<WalletResponse> addWalletBalance(@RequestBody WalletAddBalanceRequest request) {
-        log.info("Updating wallet balance");
-        return ApiResponse.<WalletResponse>builder()
-                .code(200)
-                .result(walletService.addBalance(request))
-                .build();
-    }
-
     @GetMapping("/get-balance")
     public ApiResponse<WalletResponse> getMyBalance() {
         log.info("Getting wallet balance");
