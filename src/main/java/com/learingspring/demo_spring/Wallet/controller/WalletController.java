@@ -1,13 +1,16 @@
 package com.learingspring.demo_spring.Wallet.controller;
 
-import com.learingspring.demo_spring.Wallet.dto.request.WalletAddBalanceRequest;
+import com.learingspring.demo_spring.Wallet.dto.response.HistoryBalanceResponse;
 import com.learingspring.demo_spring.Wallet.dto.response.TopUpResponse;
 import com.learingspring.demo_spring.Wallet.dto.response.WalletResponse;
+import com.learingspring.demo_spring.Wallet.entity.HistoryBalance;
 import com.learingspring.demo_spring.Wallet.service.VNPayService;
 import com.learingspring.demo_spring.Wallet.service.WalletService;
 import com.learingspring.demo_spring.exception.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -56,5 +59,16 @@ public class WalletController{
                     .result(new TopUpResponse("Failed"))
                     .build();
         }
+    }
+
+    @GetMapping("/get-history")
+    public ApiResponse<Page<HistoryBalanceResponse>> getHistory(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        log.info("Getting history balance");
+        return ApiResponse.<Page<HistoryBalanceResponse>>builder()
+                .code(200)
+                .result(walletService.getMyHistoryBalance(page, size))
+                .build();
     }
 }

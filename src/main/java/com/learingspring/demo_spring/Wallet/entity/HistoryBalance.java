@@ -6,7 +6,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
 @Setter
@@ -15,21 +14,17 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Wallet {
+public class HistoryBalance {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name="id")
     String id;
 
+    @ManyToOne
+    @JoinColumn(name = "wallet_id")
+    Wallet wallet;
 
-    @OneToOne(mappedBy = "wallet")
-    User user;
-
-    @Column(nullable = false)
-    Number balance;
+    @Column(name = "balance")
+    String balance;
     LocalDate updatedAt;
-
-    @OneToMany
-    List<HistoryBalance> historyBalance;
-
 }
