@@ -35,7 +35,7 @@ public class SecurityConfig {
             "/reportWarranty/**",
             "/printers/**",
             "/files/**",
-            "/files"
+            "/files",
     };
 
     @Bean

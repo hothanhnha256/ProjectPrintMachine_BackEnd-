@@ -10,6 +10,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.Cascade;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
@@ -34,38 +35,49 @@ public class History {
     String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="mssv",referencedColumnName = "mssv",nullable = false)
+    @JoinColumn(name = "mssv", referencedColumnName = "mssv", nullable = false)
     User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="file_id",referencedColumnName ="id",nullable = false )
+    @JoinColumn(name = "file_id", referencedColumnName = "id", nullable = false)
     File file;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(
-            name = "printer_id",
-            referencedColumnName = "id",
-            nullable = true,
-            foreignKey = @ForeignKey(name = "fk_history_printmachine",
-                    foreignKeyDefinition = "FOREIGN KEY (printer_id) REFERENCES print_machine(id) ON DELETE SET NULL") // Cấu hình ON DELETE CASCADE
-    )
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "printer_id", referencedColumnName = "id", nullable = true)
     PrintMachine printMachine;
 
-    @JoinColumn(name= "number_of_copies")
+    @Column(name = "copies_num")
     int copiesNum;
-    @JoinColumn(name = "side_of_page")
+    @Column(name = "side_of_page")
     boolean sideOfPage;  //false is 1 side of page, true is 2 sides of page.
-    @JoinColumn(name = "type_of_page")
+    @Column(name = "type_of_page")
     @Enumerated(EnumType.STRING)
     PageType typeOfPage;
 
-    @JoinColumn(name = "print_color")
+    @Column(name = "print_color")
     boolean printColor; //false is no, true is yes
 
-    LocalDateTime date;
+    @Column(name = "date")
+    LocalDate date;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     Process process;
+
+    @Override
+    public String toString() {
+        return "History{" +
+                "id='" + id + '\'' +
+                ", user=" + user +
+                ", file=" + file +
+                ", printMachine=" + printMachine +
+                ", copiesNum=" + copiesNum +
+                ", sideOfPage=" + sideOfPage +
+                ", typeOfPage=" + typeOfPage +
+                ", printColor=" + printColor +
+                ", date=" + date +
+                ", process=" + process +
+                '}';
+    }
 }
