@@ -95,4 +95,5 @@ public interface PrintmachineRepository extends JpaRepository<PrintMachine,Strin
 
     @Query("SELECT p.printWaiting FROM PrintMachine p WHERE p.id = :id")
     Integer findWaitingById(@Param("id") String id);
+
 }

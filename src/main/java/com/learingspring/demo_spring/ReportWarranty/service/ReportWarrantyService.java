@@ -1,10 +1,14 @@
 package com.learingspring.demo_spring.ReportWarranty.service;
 
+import com.learingspring.demo_spring.PrintMachine.entity.PrintMachine;
+import com.learingspring.demo_spring.PrintMachine.repository.PrintmachineRepository;
 import com.learingspring.demo_spring.ReportWarranty.dto.request.ReportWarrantyCreateRequest;
 import com.learingspring.demo_spring.ReportWarranty.dto.response.ReportWarrantyResponse;
 import com.learingspring.demo_spring.ReportWarranty.entity.ReportWarranty;
 import com.learingspring.demo_spring.ReportWarranty.mapper.ReportWarrantyMapper;
 import com.learingspring.demo_spring.ReportWarranty.repository.ReportWarrantyRepository;
+import com.learingspring.demo_spring.exception.AppException;
+import com.learingspring.demo_spring.exception.ErrorCode;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -25,9 +29,14 @@ import java.time.LocalDate;
 public class ReportWarrantyService {
     ReportWarrantyRepository reportWarrantyRepository;
     ReportWarrantyMapper reportWarrantyMapper;
+    PrintmachineRepository printmachineRepository;
 
     public ReportWarrantyResponse createReportWarranty(ReportWarrantyCreateRequest reportWarrantyCreateRequest) {
+        if (printmachineRepository.findById(reportWarrantyCreateRequest.getIdMachine()).isEmpty()) {
+            throw new AppException(ErrorCode.PRINT_MACHINE_NOT_FOUND);
+        }
         ReportWarranty reportWarranty = reportWarrantyMapper.toReportWarranty(reportWarrantyCreateRequest);
+        reportWarranty.setIdMachine(reportWarrantyCreateRequest.getIdMachine());
         reportWarranty.setCreateDate(LocalDate.now());
         reportWarrantyRepository.save(reportWarranty);
         return reportWarrantyMapper.toReportWarrantyResponse(reportWarranty);
@@ -35,7 +44,10 @@ public class ReportWarrantyService {
 
     public Page<ReportWarrantyResponse> getReportWarrantyByMachineId(String machineId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return reportWarrantyRepository.findAllByPrintMachine_Id(machineId, pageable)
+        if (printmachineRepository.findById(machineId).isEmpty()) {
+            throw new AppException(ErrorCode.PRINT_MACHINE_NOT_FOUND);
+        }
+        return reportWarrantyRepository.findAllByIdMachine(machineId, pageable)
                 .map(reportWarrantyMapper::toReportWarrantyResponse);
     }
 

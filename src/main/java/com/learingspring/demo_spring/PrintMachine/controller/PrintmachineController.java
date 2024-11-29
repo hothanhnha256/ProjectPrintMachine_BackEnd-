@@ -6,6 +6,7 @@ import com.learingspring.demo_spring.PrintMachine.dto.request.PrintmachineCreati
 import com.learingspring.demo_spring.PrintMachine.dto.response.AvailablePrintersResponse;
 import com.learingspring.demo_spring.PrintMachine.entity.PrintMachine;
 import com.learingspring.demo_spring.PrintMachine.service.PrintmachineService;
+import com.learingspring.demo_spring.ReportWarranty.dto.request.ReportWarrantyCreateRequest;
 import com.learingspring.demo_spring.exception.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.simpleframework.xml.core.Validate;
@@ -62,5 +63,16 @@ public class PrintmachineController {
     ApiResponse<String> addMaterial(@RequestBody @Validate AddMaterialRequest request){
         return printmachineService.addMaterialtoPrinter(request);
     }
+    
+    @PostMapping("/maintenancePrint")
+    ApiResponse<PrintMachine> maintenancePrintMachine(@RequestBody ReportWarrantyCreateRequest request){
+        return printmachineService.maintenancePrintMachine(request);
+    }
+
+    @PostMapping("/completeMaintenancePrint")
+    ApiResponse<PrintMachine> completeMaintenancePrint(@RequestBody ReportWarrantyCreateRequest request){
+        return printmachineService.completeMaintenancePrintMachine(request);
+    }
+    
 
 }

@@ -11,7 +11,6 @@ import java.time.LocalDate;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ReportWarrantyCreateRequest {
-    String id_machine;
+    String idMachine;
     String description;
-    LocalDate createDate;
 }

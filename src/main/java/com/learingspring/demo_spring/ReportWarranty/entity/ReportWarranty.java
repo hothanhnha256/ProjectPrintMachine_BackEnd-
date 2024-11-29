@@ -20,9 +20,8 @@ public class ReportWarranty {
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
-    @ManyToOne
-    @JoinColumn(name="id_machine", referencedColumnName = "id", nullable = false)
-    PrintMachine printMachine;
+    @Column(nullable = false)
+    String idMachine;
 
     String description;
     LocalDate createDate;

@@ -8,6 +8,8 @@ import com.learingspring.demo_spring.MaterialStorage.dto.request.AdjustMaterialR
 import com.learingspring.demo_spring.MaterialStorage.service.MaterialStorageService;
 import com.learingspring.demo_spring.PriceSetting.service.PriceSettingService;
 import com.learingspring.demo_spring.PrintMachine.dto.request.AddMaterialRequest;
+import com.learingspring.demo_spring.ReportWarranty.dto.request.ReportWarrantyCreateRequest;
+import com.learingspring.demo_spring.ReportWarranty.service.ReportWarrantyService;
 import com.learingspring.demo_spring.User.entity.User;
 import com.learingspring.demo_spring.User.services.UserService;
 import com.learingspring.demo_spring.Wallet.service.WalletService;
@@ -29,10 +31,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -48,6 +47,7 @@ public class PrintmachineService {
     private final PriceSettingService priceSettingService;
     private final WalletService walletService;
     private final MaterialStorageService materialStorageService;
+    private final ReportWarrantyService reportWarrantyService;
 
     // Khởi tạo map để lưu trữ thread của từng máy in
     private final Map<String, Thread> printerThreads = new HashMap<>();
@@ -83,7 +83,6 @@ public class PrintmachineService {
         printer.setCapacity(request.getCapacity());
         printer.setPrintWaiting(0);
 
-        printer.setWarrantyDate(request.getWarrantyDate());
         printer.setStatus(true);
 
         printer.setCreateDate(LocalDate.now());
@@ -242,6 +241,35 @@ public class PrintmachineService {
 
         return result;
     }
+
+    public ApiResponse<PrintMachine> maintenancePrintMachine(ReportWarrantyCreateRequest request) {
+        Optional<PrintMachine> maintenance= printmachineRepository.findById(request.getIdMachine());
+        if(maintenance.isEmpty()){
+            throw new AppException(ErrorCode.PRINT_MACHINE_NOT_FOUND);
+        }
+        PrintMachine printMachine = maintenance.get();
+        printMachine.setStatus(false);
+        reportWarrantyService.createReportWarranty(request);
+        return ApiResponse.<PrintMachine>builder()
+                .code(200)
+                .result(printmachineRepository.save(printMachine))
+                .build();
+    }
+
+    public ApiResponse<PrintMachine> completeMaintenancePrintMachine(ReportWarrantyCreateRequest request) {
+        Optional<PrintMachine> maintenance= printmachineRepository.findById(request.getIdMachine());
+        if(maintenance.isEmpty()){
+            throw new AppException(ErrorCode.PRINT_MACHINE_NOT_FOUND);
+        }
+        PrintMachine printMachine = maintenance.get();
+        printMachine.setStatus(true);
+        reportWarrantyService.createReportWarranty(request);
+        return ApiResponse.<PrintMachine>builder()
+                .code(200)
+                .result(printmachineRepository.save(printMachine))
+                .build();
+    }
+
 
     //-------------------------------------------Utilization tool-------------------------------------------------------
 

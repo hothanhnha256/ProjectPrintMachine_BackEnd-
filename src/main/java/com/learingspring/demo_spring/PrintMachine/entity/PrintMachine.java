@@ -1,11 +1,14 @@
 package com.learingspring.demo_spring.PrintMachine.entity;
 
 import com.learingspring.demo_spring.Location.Entity.Location;
+import com.learingspring.demo_spring.ReportWarranty.entity.ReportWarranty;
+import com.learingspring.demo_spring.Wallet.entity.Wallet;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 @Entity
@@ -49,8 +52,7 @@ public class PrintMachine {
     @JoinColumn(name = "printWaiting")
     Integer printWaiting;
 
-    //Warranty
-    LocalDate warrantyDate;
+
     Boolean status; // BAT/TAT
 
     LocalDate createDate;

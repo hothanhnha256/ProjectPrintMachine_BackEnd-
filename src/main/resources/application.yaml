@@ -11,7 +11,7 @@ spring:
     password: AVNS_0ZapZiAKfvz3wzVZH9v
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     show-sql: true
 
 jwt:

@@ -6,7 +6,5 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ReportWarrantyRepository extends JpaRepository<ReportWarranty, String> {
-
-    Page<ReportWarranty> findAllByPrintMachine_Id(String machineId, Pageable pageable);
-
+    Page<ReportWarranty> findAllByIdMachine(String idMachine, Pageable pageable); // Updated to match camelCase field
 }
