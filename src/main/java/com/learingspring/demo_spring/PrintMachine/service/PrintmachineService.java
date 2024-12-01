@@ -27,6 +27,7 @@ import com.learingspring.demo_spring.exception.AppException;
 import com.learingspring.demo_spring.exception.ErrorCode;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -150,9 +151,10 @@ public class PrintmachineService {
 
         ApiResponse<String> result = new ApiResponse<>();
 
-        if(!checkWallet(user,copiesNum,sideOfPage,typeOfPage,printColor)) {
+        String walletCheckResult = checkWallet(user, copiesNum, sideOfPage, typeOfPage, printColor);
+        if(walletCheckResult != null) {
             result.setCode(401);
-            result.setMessage("User's balance is not enough");
+            result.setMessage(walletCheckResult);
             return result;
         }
 
@@ -416,19 +418,23 @@ public class PrintmachineService {
         }
     }
 
-    private boolean checkWallet(User user, int copiesNum, boolean sideOfPage, PageType typeOfPage, boolean printColor ){
-        Number pricePerPage = priceSettingService.getPrice(typeOfPage, printColor);
+    private String checkWallet(User user, int copiesNum, boolean sideOfPage, PageType typeOfPage, boolean printColor ){
+        Number pricePerPage = priceSettingService.getPrice(typeOfPage, sideOfPage, printColor);
+
+        if(pricePerPage == null) {
+            return "Paper type not supported or missing configuration.";
+        }
+
         // Kiểm tra kiểu của pricePerPage và ép kiểu cho phù hợp
         double pricePerPageDouble = pricePerPage.doubleValue() * copiesNum;
 
         // Giả sử balance của người dùng là số nguyên (hoặc bạn có thể dùng .doubleValue() nếu cần so sánh với double)
         double userBalance = user.getWallet().getBalance().doubleValue();
 
-        if(userBalance >= pricePerPageDouble){
-            user.setWallet(walletService.payment(pricePerPage));
-            return true;
+        if (userBalance < pricePerPageDouble) {
+            return "User's balance is not enough.";
         }
-        return false;
+        return null;
     }
 
     private void processPrintRequest(String machineId, boolean printColor, PageType typeOfPage, int copiesNum, int printWait) {

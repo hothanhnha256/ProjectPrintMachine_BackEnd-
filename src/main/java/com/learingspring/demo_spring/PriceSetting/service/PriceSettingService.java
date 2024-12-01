@@ -106,8 +106,8 @@ public class PriceSettingService {
                 priceSettingRequest.getPageType());
     }
 
-    public Number getPrice(PageType pageType, Boolean color) {
-        if(color) return priceSettingRepository.findPriceByColorTypeAndPageType(ColorType.COLOR_INK, pageType);
-        else return priceSettingRepository.findPriceByColorTypeAndPageType(ColorType.BLACK_WHITE_INK, pageType);
+    public Number getPrice(PageType pageType, Boolean sideOfPage, Boolean color) {
+        if(color) return priceSettingRepository.findPriceByColorTypeAndPageType(ColorType.COLOR_INK, sideOfPage,pageType);
+        else return priceSettingRepository.findPriceByColorTypeAndPageType(ColorType.BLACK_WHITE_INK, sideOfPage,pageType);
     }
 }

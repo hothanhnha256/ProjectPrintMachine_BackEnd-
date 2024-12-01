@@ -25,6 +25,6 @@ public interface PriceSettingRepository extends JpaRepository<Price, Long> {
              @Param("pageType") String pageType
      );
 
-    @Query("SELECT p.pricePage FROM Price p WHERE p.colorType = :colorType AND p.pageType = :pageType")
-    Number findPriceByColorTypeAndPageType(@Param("colorType") ColorType colorType, @Param("pageType") PageType pageType);
+    @Query("SELECT p.pricePage FROM Price p WHERE p.colorType = :colorType AND p.faceType = :faceType  AND p.pageType = :pageType")
+    Number findPriceByColorTypeAndPageType(@Param("colorType") ColorType colorType, @Param("faceType") Boolean faceType, @Param("pageType") PageType pageType);
 }
