@@ -33,4 +33,6 @@ public interface HistoryRepository extends JpaRepository<History, String> {
             "   AND (:printerId IS NULL OR h.printMachine.id = :printerId) " +
             "   AND (:mssv IS NULL OR h.user.mssv = :mssv)")
     Page<History> search(Pageable pageable, @Param("start") LocalDate start, @Param("end") LocalDate end, @Param("fileId") String fileId, @Param("printerId") String printerId, @Param("mssv") String mssv);
+
+    void deleteByFileId(String id);
 }

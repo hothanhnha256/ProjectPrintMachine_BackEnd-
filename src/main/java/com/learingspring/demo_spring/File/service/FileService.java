@@ -5,6 +5,7 @@ import com.learingspring.demo_spring.File.dto.request.FileIDRequest;
 import com.learingspring.demo_spring.File.dto.response.FileResponse;
 import com.learingspring.demo_spring.File.entity.File;
 import com.learingspring.demo_spring.File.repository.FileRepository;
+import com.learingspring.demo_spring.History.reposity.HistoryRepository;
 import com.learingspring.demo_spring.User.entity.User;
 import com.learingspring.demo_spring.User.repository.UserRepository;
 import com.learingspring.demo_spring.exception.AppException;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -30,7 +32,7 @@ import java.time.LocalDate;
 public class FileService {
     FileRepository fileRepository;
     UserRepository userRepository;
-
+    HistoryRepository historyRepository;
     private static final long MAX_STORAGE_LIMIT = (long) 1024 * 1024 * 1024;
 
 
@@ -93,6 +95,7 @@ public class FileService {
                 .map(this::toFileResponse);
     }
 
+    @Transactional
     public FileResponse deleteFile(FileIDRequest request) {
         log.info("Inside deleteFile method");
 
@@ -100,6 +103,15 @@ public class FileService {
 
         File file = fileRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.FILE_NOT_FOUND));
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+
+        User user = userRepository.findByUsername(name)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_INVALID));
+
+        user.setCapacity(user.getCapacity() - file.getFileData().length);
+        userRepository.save(user);
+        historyRepository.deleteByFileId(id);
         fileRepository.delete(file);
 
         return toFileResponse(file);
