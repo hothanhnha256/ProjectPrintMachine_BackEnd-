@@ -434,6 +434,9 @@ public class PrintmachineService {
         if (userBalance < pricePerPageDouble) {
             return "User's balance is not enough.";
         }
+        else{
+            user.setWallet(walletService.payment(pricePerPageDouble));
+        }
         return null;
     }
 
