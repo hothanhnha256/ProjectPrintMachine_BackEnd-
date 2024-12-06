@@ -63,8 +63,8 @@ public class WalletController{
 
     @GetMapping("/get-history")
     public ApiResponse<Page<HistoryBalanceResponse>> getHistory(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam int page,
+            @RequestParam int size) {
         log.info("Getting history balance");
         return ApiResponse.<Page<HistoryBalanceResponse>>builder()
                 .code(200)

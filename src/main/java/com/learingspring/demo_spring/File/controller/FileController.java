@@ -32,8 +32,8 @@ public class FileController {
     }
 
     @GetMapping("/get-all")
-    public ApiResponse<Page<FileResponse>> getAllFiles(@RequestParam(value = "page", defaultValue = "0") int page,
-                                                       @RequestParam(value = "size", defaultValue = "10") int size) {
+    public ApiResponse<Page<FileResponse>> getAllFiles(@RequestParam(value = "page") int page,
+                                                       @RequestParam(value = "size") int size) {
         ApiResponse<Page<FileResponse>> apiResponse = new ApiResponse<>();
         apiResponse.setCode(200);
         apiResponse.setResult(fileService.getAllFilesByStudent(page, size));
