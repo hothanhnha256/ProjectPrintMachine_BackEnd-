@@ -18,5 +18,6 @@ public class SearchHistoryReqDTO implements Serializable {
     private LocalDate end;
     private String fileId;
     private String printerId;
+    private Boolean isMyHistory;
     private String mssv;
 }

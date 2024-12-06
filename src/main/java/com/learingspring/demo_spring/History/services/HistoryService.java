@@ -99,13 +99,21 @@ public class HistoryService {
     }
 
     public SearchHistoryResDTO search(SearchHistoryReqDTO searchHistoryReq, Pageable pageable) {
+        String mssv = null;
+        if (searchHistoryReq.getIsMyHistory()) {
+            User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(RuntimeException::new);
+            mssv = user.getMssv();
+        } else if (searchHistoryReq.getMssv() != null) {
+            // Lấy mssv từ request nếu IsMyHistory = false
+            mssv = searchHistoryReq.getMssv();
+        }
         Page<History> page = historyRepository.search(
                 pageable,
                 searchHistoryReq.getStart(),
                 searchHistoryReq.getEnd(),
                 searchHistoryReq.getFileId(),
                 searchHistoryReq.getPrinterId(),
-                searchHistoryReq.getMssv()
+                mssv
                 );
         SearchHistoryResDTO res = new SearchHistoryResDTO();
         res.setData(page.getContent().stream().map(historyMapper::toDto).toList());
