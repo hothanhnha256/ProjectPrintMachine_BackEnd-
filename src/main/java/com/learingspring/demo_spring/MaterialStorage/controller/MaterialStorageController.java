@@ -44,7 +44,7 @@ public class MaterialStorageController {
     ApiResponse<MaterialResponse> addMaterials(@RequestBody AdjustMaterialRequest addMaterialRequest) {
         return ApiResponse.<MaterialResponse>builder()
                 .code(200)
-                .result(materialStorageService.adjustMaterial(addMaterialRequest))
+                .result(materialStorageService.adjustMaterial(addMaterialRequest,""))
                 .build();
     }
 

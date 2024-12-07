@@ -7,6 +7,8 @@ import com.learingspring.demo_spring.HistoryMaterialStorage.dto.response.History
 import com.learingspring.demo_spring.HistoryMaterialStorage.entity.HistoryMaterialStorage;
 import com.learingspring.demo_spring.HistoryMaterialStorage.mapper.HistoryMaterialMapper;
 import com.learingspring.demo_spring.HistoryMaterialStorage.repository.HistoryMaterialRepository;
+import com.learingspring.demo_spring.PrintMachine.entity.PrintMachine;
+import com.learingspring.demo_spring.PrintMachine.repository.PrintmachineRepository;
 import com.learingspring.demo_spring.exception.AppException;
 import com.learingspring.demo_spring.exception.ErrorCode;
 import lombok.AccessLevel;
@@ -31,9 +33,11 @@ public class HistoryMaterialService {
 
     HistoryMaterialRepository historyMaterialRepository;
     HistoryMaterialMapper historyMaterialMapper;
+    PrintmachineRepository printmachineRepository;
 
     public Page<HistoryMaterialResponse> getHistoryMaterials(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
+
         return historyMaterialRepository.findAll(pageable).map(historyMaterialMapper::toHistoryMaterialResponse);
     }
 
@@ -49,6 +53,10 @@ public class HistoryMaterialService {
 
     public HistoryMaterialResponse useHistoryMaterial(UseMaterialHistoryRequest useMaterialHistoryRequest) {
         HistoryMaterialStorage historyMaterialStorage = historyMaterialMapper.toHistoryMaterialStorage(useMaterialHistoryRequest);
+        log.info(useMaterialHistoryRequest.getId_machine());
+        historyMaterialStorage.setPrintMachine(printmachineRepository.findById(useMaterialHistoryRequest.getId_machine()).orElseThrow(
+                ()-> new AppException(ErrorCode.PRINT_MACHINE_NOT_FOUND)
+        ));
         historyMaterialStorage.setDateUse(LocalDate.now());
         historyMaterialRepository.save(historyMaterialStorage);
         return historyMaterialMapper.toHistoryMaterialResponse(historyMaterialStorage);
@@ -56,6 +64,7 @@ public class HistoryMaterialService {
 
     public HistoryMaterialResponse addHistoryMaterial(AddMaterialHistoryRequest addMaterialHistoryRequest) {
         HistoryMaterialStorage historyMaterialStorage = historyMaterialMapper.toHistoryMaterialStorage2(addMaterialHistoryRequest);
+
         historyMaterialStorage.setDateUse(LocalDate.now());
         historyMaterialRepository.save(historyMaterialStorage);
         return historyMaterialMapper.toHistoryMaterialResponse(historyMaterialStorage);

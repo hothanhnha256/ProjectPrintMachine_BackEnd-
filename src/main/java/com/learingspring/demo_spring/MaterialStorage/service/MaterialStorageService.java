@@ -2,6 +2,7 @@ package com.learingspring.demo_spring.MaterialStorage.service;
 
 
 import com.learingspring.demo_spring.HistoryMaterialStorage.dto.request.AddMaterialHistoryRequest;
+import com.learingspring.demo_spring.HistoryMaterialStorage.dto.request.UseMaterialHistoryRequest;
 import com.learingspring.demo_spring.HistoryMaterialStorage.service.HistoryMaterialService;
 import com.learingspring.demo_spring.MaterialStorage.dto.request.CreateMaterialRequest;
 import com.learingspring.demo_spring.MaterialStorage.dto.request.AdjustMaterialRequest;
@@ -62,7 +63,36 @@ public class MaterialStorageService {
     }
 
 
-    public MaterialResponse adjustMaterial(AdjustMaterialRequest updateMaterialRequest) {
+    public MaterialResponse adjustMaterial(AdjustMaterialRequest updateMaterialRequest,String idMachine) {
+        if(Boolean.FALSE.equals(materialStorageRepository.existsByName(updateMaterialRequest.getName()))){
+            throw new AppException(ErrorCode.MATERIAL_NOT_EXITS);
+        }
+        MaterialStorage materialStorage = materialStorageRepository.findByName(updateMaterialRequest.getName());
+
+
+
+        materialStorage.setValue(materialStorage.getValue().intValue() + updateMaterialRequest.getValue().intValue());
+        if (materialStorage.getValue().intValue()<0){
+            throw new AppException(ErrorCode.MATERIAL_NOT_ENOUGH);
+        }
+            log.info(idMachine);
+
+            UseMaterialHistoryRequest addMaterialHistoryRequest=new UseMaterialHistoryRequest();
+            addMaterialHistoryRequest.setName(updateMaterialRequest.getName());
+            addMaterialHistoryRequest.setValue(updateMaterialRequest.getValue());
+            String a=updateMaterialRequest.getValue().intValue()>0?"Fill":"Use";
+            addMaterialHistoryRequest.setDescription(
+                    a
+                    +" material to storage "+updateMaterialRequest.getName()+" value: "+updateMaterialRequest.getValue());
+            addMaterialHistoryRequest.setId_machine(idMachine);
+            historyMaterialService.useHistoryMaterial(addMaterialHistoryRequest);
+
+        materialStorage.setDateUpdate(LocalDate.now());
+        materialStorageRepository.save(materialStorage);
+        return materialStorageMapper.toMaterialResponse(materialStorage);
+    }
+
+    public MaterialResponse adjustMaterial(AdjustMaterialRequest updateMaterialRequest ) {
         if(Boolean.FALSE.equals(materialStorageRepository.existsByName(updateMaterialRequest.getName()))){
             throw new AppException(ErrorCode.MATERIAL_NOT_EXITS);
         }
@@ -75,15 +105,14 @@ public class MaterialStorageService {
             throw new AppException(ErrorCode.MATERIAL_NOT_ENOUGH);
         }
 
-            AddMaterialHistoryRequest addMaterialHistoryRequest=new AddMaterialHistoryRequest();
-            addMaterialHistoryRequest.setName(updateMaterialRequest.getName());
-            addMaterialHistoryRequest.setValue(updateMaterialRequest.getValue());
-            String a=updateMaterialRequest.getValue().intValue()>0?"Fill":"Use";
-            addMaterialHistoryRequest.setDescription(
-                    a
-                    +" material to storage "+updateMaterialRequest.getName()+" value: "+updateMaterialRequest.getValue());
-
-            historyMaterialService.addHistoryMaterial(addMaterialHistoryRequest);
+        AddMaterialHistoryRequest addMaterialHistoryRequest=new AddMaterialHistoryRequest();
+        addMaterialHistoryRequest.setName(updateMaterialRequest.getName());
+        addMaterialHistoryRequest.setValue(updateMaterialRequest.getValue());
+        String a=updateMaterialRequest.getValue().intValue()>0?"Fill":"Use";
+        addMaterialHistoryRequest.setDescription(
+                a
+                        +" material to storage "+updateMaterialRequest.getName()+" value: "+updateMaterialRequest.getValue());
+        historyMaterialService.addHistoryMaterial(addMaterialHistoryRequest);
 
         materialStorage.setDateUpdate(LocalDate.now());
         materialStorageRepository.save(materialStorage);

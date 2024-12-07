@@ -29,6 +29,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -38,6 +39,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class PrintmachineService {
 
     private final PrintmachineRepository printmachineRepository;
@@ -65,7 +67,6 @@ public class PrintmachineService {
         Location location = locationService.findLocationByBaseBuildingFloor(base, building, floor);
 
         // Check Material Storage
-        checkAndAllocateResources(request);
 
         printer.setName(request.getName());
         printer.setManufacturer(request.getManufacturer());
@@ -73,6 +74,14 @@ public class PrintmachineService {
         printer.setDescription(request.getDescription());
         printer.setAddress(location);
 
+
+
+        printer.setStatus(true);
+
+        printer.setCreateDate(LocalDate.now());
+        printer.setUpdateDate(LocalDate.now());
+        String ID=printmachineRepository.save(printer).getId();
+        checkAndAllocateResources(request,ID);
         printer.setBlackWhiteInkStatus(request.getBlackWhiteInkStatus());
         printer.setColorInkStatus(request.getColorInkStatus());
         printer.setA0paperStatus(request.getA0paperStatus());
@@ -83,13 +92,8 @@ public class PrintmachineService {
         printer.setA5paperStatus(request.getA5paperStatus());
         printer.setCapacity(request.getCapacity());
         printer.setPrintWaiting(0);
-
-        printer.setStatus(true);
-
-        printer.setCreateDate(LocalDate.now());
-        printer.setUpdateDate(LocalDate.now());
-
         PrintMachine savedPrinter = printmachineRepository.save(printer);
+
 
         // Khởi tạo own queue cho máy in này
         BlockingQueue<History> printQueue = new LinkedBlockingQueue<>();
@@ -231,7 +235,8 @@ public class PrintmachineService {
                 -request.getAmount() // Lấy tài nguyên từ kho, giá trị âm
         );
 
-        materialStorageService.adjustMaterial(adjustMaterialRequest);
+        log.info(printer.getId());
+        materialStorageService.adjustMaterial(adjustMaterialRequest,printer.getId());
 
         // Cập nhật tài nguyên của máy in
         updatePrinterResource(printer, request.getMaterialType(), request.getAmount());
@@ -477,24 +482,26 @@ public class PrintmachineService {
         );
     }
 
-    private void checkAndAllocateResources(PrintmachineCreationRequest request) {
-        adjustMaterial(MaterialType.BLACK_WHITE_INK, (long)request.getBlackWhiteInkStatus());
-        adjustMaterial(MaterialType.COLOR_INK, (long)request.getColorInkStatus());
-        adjustMaterial(MaterialType.A0Page, (long)request.getA0paperStatus());
-        adjustMaterial(MaterialType.A1Page, (long)request.getA1paperStatus());
-        adjustMaterial(MaterialType.A2Page, (long)request.getA2paperStatus());
-        adjustMaterial(MaterialType.A3Page, (long)request.getA3paperStatus());
-        adjustMaterial(MaterialType.A4Page, (long)request.getA4paperStatus());
-        adjustMaterial(MaterialType.A5Page, (long)request.getA5paperStatus());
+    private void checkAndAllocateResources(PrintmachineCreationRequest request,String Id) {
+        log.info(request.getId());
+        adjustMaterial(MaterialType.BLACK_WHITE_INK, (long)request.getBlackWhiteInkStatus(),Id);
+        adjustMaterial(MaterialType.COLOR_INK, (long)request.getColorInkStatus(),Id);
+        adjustMaterial(MaterialType.A0Page, (long)request.getA0paperStatus(),Id);
+        adjustMaterial(MaterialType.A1Page, (long)request.getA1paperStatus(),Id);
+        adjustMaterial(MaterialType.A2Page, (long)request.getA2paperStatus(),Id);
+        adjustMaterial(MaterialType.A3Page, (long)request.getA3paperStatus(),Id);
+        adjustMaterial(MaterialType.A4Page, (long)request.getA4paperStatus(),Id);
+        adjustMaterial(MaterialType.A5Page, (long)request.getA5paperStatus(),Id);
     }
 
-    private void adjustMaterial(MaterialType materialType, Long requiredAmount) {
+    private void adjustMaterial(MaterialType materialType, Long requiredAmount,String id) {
         if (requiredAmount == null || requiredAmount <= 0) {
             return;
         }
 
+
         AdjustMaterialRequest adjustRequest = new AdjustMaterialRequest(materialType, -requiredAmount);
-        materialStorageService.adjustMaterial(adjustRequest);
+        materialStorageService.adjustMaterial(adjustRequest,id);
     }
 
     private void updatePrinterResource(PrintMachine printer, MaterialType materialType, Long amount) {
