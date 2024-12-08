@@ -5,6 +5,7 @@ import com.learingspring.demo_spring.History.dto.reponse.HistoryDTO;
 import com.learingspring.demo_spring.History.dto.reponse.SearchHistoryResDTO;
 import com.learingspring.demo_spring.History.dto.request.CreateHistoryDTO;
 import com.learingspring.demo_spring.History.dto.request.SearchHistoryReqDTO;
+import com.learingspring.demo_spring.History.dto.request.SearchMyHistoryReqDTO;
 import com.learingspring.demo_spring.History.entity.History;
 import com.learingspring.demo_spring.History.mapper.HistoryMapper;
 import com.learingspring.demo_spring.History.reposity.HistoryRepository;
@@ -99,22 +100,33 @@ public class HistoryService {
     }
 
     public SearchHistoryResDTO search(SearchHistoryReqDTO searchHistoryReq, Pageable pageable) {
-        String mssv = null;
-        if (searchHistoryReq.getIsMyHistory()) {
-            User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(RuntimeException::new);
-            mssv = user.getMssv();
-        } else if (searchHistoryReq.getMssv() != null) {
-            // Lấy mssv từ request nếu IsMyHistory = false
-            mssv = searchHistoryReq.getMssv();
-        }
         Page<History> page = historyRepository.search(
                 pageable,
                 searchHistoryReq.getStart(),
                 searchHistoryReq.getEnd(),
                 searchHistoryReq.getFileId(),
                 searchHistoryReq.getPrinterId(),
-                mssv
-                );
+                searchHistoryReq.getMssv()
+        );
+        SearchHistoryResDTO res = new SearchHistoryResDTO();
+        res.setData(page.getContent().stream().map(historyMapper::toDto).toList());
+        res.setTotal(page.getTotalElements());
+        res.setCurrentPage(pageable.getPageNumber());
+        res.setCurrentSize(pageable.getPageSize());
+        res.setTotalPage(page.getTotalPages());
+        return res;
+    }
+
+    public SearchHistoryResDTO searchMyHistory(SearchMyHistoryReqDTO searchHistoryReq, Pageable pageable) {
+        User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(RuntimeException::new);
+        Page<History> page = historyRepository.search(
+                pageable,
+                searchHistoryReq.getStart(),
+                searchHistoryReq.getEnd(),
+                searchHistoryReq.getFileId(),
+                searchHistoryReq.getPrinterId(),
+                user.getMssv()
+        );
         SearchHistoryResDTO res = new SearchHistoryResDTO();
         res.setData(page.getContent().stream().map(historyMapper::toDto).toList());
         res.setTotal(page.getTotalElements());

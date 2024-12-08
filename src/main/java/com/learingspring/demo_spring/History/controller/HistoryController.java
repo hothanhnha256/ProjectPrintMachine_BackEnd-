@@ -4,6 +4,7 @@ import com.learingspring.demo_spring.History.dto.reponse.HistoryDTO;
 import com.learingspring.demo_spring.History.dto.reponse.SearchHistoryResDTO;
 import com.learingspring.demo_spring.History.dto.request.CreateHistoryDTO;
 import com.learingspring.demo_spring.History.dto.request.SearchHistoryReqDTO;
+import com.learingspring.demo_spring.History.dto.request.SearchMyHistoryReqDTO;
 import com.learingspring.demo_spring.History.services.HistoryService;
 import com.learingspring.demo_spring.exception.ApiResponse;
 import jakarta.validation.Valid;
@@ -43,6 +44,7 @@ public class HistoryController {
                 .build();
     }
 
+
     @PostMapping("/search")
     public ApiResponse<SearchHistoryResDTO> searchHistory(
             @RequestParam(defaultValue = "0") Integer page,
@@ -54,6 +56,23 @@ public class HistoryController {
         Sort sortOrder = Sort.by(new Sort.Order(Sort.Direction.fromString(sortParams[1]), sortParams[0]));
         Pageable pageable = PageRequest.of(page, size, sortOrder);
         SearchHistoryResDTO result = historyService.search(searchHistoryReq, pageable);
+        return ApiResponse.<SearchHistoryResDTO>builder()
+                .code(200)
+                .result(result)
+                .build();
+    }
+
+    @PostMapping("/get-my-history")
+    public ApiResponse<SearchHistoryResDTO> getUserHistory(
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(defaultValue = "date,DESC") String sort,
+            @RequestBody SearchMyHistoryReqDTO searchHistoryReq) throws URISyntaxException {
+        log.debug("REST request to search History : {}", searchHistoryReq);
+        String[] sortParams = sort.split(",");
+        Sort sortOrder = Sort.by(new Sort.Order(Sort.Direction.fromString(sortParams[1]), sortParams[0]));
+        Pageable pageable = PageRequest.of(page, size, sortOrder);
+        SearchHistoryResDTO result = historyService.searchMyHistory(searchHistoryReq, pageable);
         return ApiResponse.<SearchHistoryResDTO>builder()
                 .code(200)
                 .result(result)

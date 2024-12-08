@@ -11,10 +11,9 @@ import lombok.Data;
 @SuppressWarnings("common-java:DuplicatedBlocks")
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SearchHistoryReqDTO implements Serializable {
+public class SearchMyHistoryReqDTO implements Serializable {
     private LocalDate start;
     private LocalDate end;
     private String fileId;
     private String printerId;
-    private String mssv;
 }
