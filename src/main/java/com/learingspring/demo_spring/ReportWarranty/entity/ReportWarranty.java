@@ -23,6 +23,8 @@ public class ReportWarranty {
     @Column(nullable = false)
     String idMachine;
 
+    String name;
+
     String description;
     LocalDate createDate;
 }
