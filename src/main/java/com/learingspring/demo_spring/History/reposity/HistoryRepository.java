@@ -29,10 +29,19 @@ public interface HistoryRepository extends JpaRepository<History, String> {
             "WHERE " +
             "   (:start IS NULL OR h.date >= :start) " +
             "   AND (:end IS NULL OR h.date <= :end) " +
-            "   AND (:fileId IS NULL OR h.file.id = :fileId) " +
-            "   AND (:printerId IS NULL OR h.printMachine.id = :printerId) " +
+            "   AND (:fileId IS NULL OR h.file.id LIKE CONCAT('%', :fileId, '%')) " +
+            "   AND (:printerId IS NULL OR h.printMachine.id LIKE CONCAT('%', :printerId, '%')) " +
             "   AND (:mssv IS NULL OR h.user.mssv = :mssv)")
     Page<History> search(Pageable pageable, @Param("start") LocalDate start, @Param("end") LocalDate end, @Param("fileId") String fileId, @Param("printerId") String printerId, @Param("mssv") String mssv);
+
+
+    @Query("SELECT h FROM History h " +
+            "WHERE " +
+            "   (:start IS NULL OR h.date >= :start) " +
+            "   AND (:end IS NULL OR h.date <= :end) " +
+            "   AND (:fileId IS NULL OR h.file.id LIKE CONCAT('%', :fileId, '%')) " +
+            "   AND (:printerId IS NULL OR h.printMachine.id LIKE CONCAT('%', :printerId, '%')) ")
+    Page<History> search(Pageable pageable, @Param("start") LocalDate start, @Param("end") LocalDate end, @Param("fileId") String fileId, @Param("printerId") String printerId);
 
     void deleteByFileId(String id);
 }

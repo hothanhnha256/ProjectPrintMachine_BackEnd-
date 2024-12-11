@@ -3,6 +3,7 @@ package com.learingspring.demo_spring.History.controller;
 import com.learingspring.demo_spring.History.dto.reponse.HistoryDTO;
 import com.learingspring.demo_spring.History.dto.reponse.SearchHistoryResDTO;
 import com.learingspring.demo_spring.History.dto.request.CreateHistoryDTO;
+import com.learingspring.demo_spring.History.dto.request.SearchAdminDto;
 import com.learingspring.demo_spring.History.dto.request.SearchHistoryReqDTO;
 import com.learingspring.demo_spring.History.services.HistoryService;
 import com.learingspring.demo_spring.exception.ApiResponse;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URISyntaxException;
+import java.time.LocalDate;
 import java.util.Optional;
 
 
@@ -33,27 +35,49 @@ public class HistoryController {
         this.historyService = historyService;
     }
 
-    @PostMapping("")
-    public ApiResponse<HistoryDTO> createHistory(@Valid @RequestBody CreateHistoryDTO createHistory) throws URISyntaxException {
-        log.debug("REST request to save History : {}", createHistory);
-        HistoryDTO result = historyService.save(createHistory);
-        return ApiResponse.<HistoryDTO>builder()
-                .code(200)
-                .result(result)
-                .build();
-    }
+//    @PostMapping("")
+//    public ApiResponse<HistoryDTO> createHistory(@Valid @RequestBody CreateHistoryDTO createHistory) throws URISyntaxException {
+//        log.debug("REST request to save History : {}", createHistory);
+//        HistoryDTO result = historyService.save(createHistory);
+//        return ApiResponse.<HistoryDTO>builder()
+//                .code(200)
+//                .result(result)
+//                .build();
+//    }
 
-    @PostMapping("/search")
+    @GetMapping("/search")
     public ApiResponse<SearchHistoryResDTO> searchHistory(
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(defaultValue = "date,DESC") String sort,
-            @RequestBody SearchHistoryReqDTO searchHistoryReq) throws URISyntaxException {
+            @RequestBody SearchHistoryReqDTO searchHistoryReq)  {
         log.debug("REST request to search History : {}", searchHistoryReq);
         String[] sortParams = sort.split(",");
         Sort sortOrder = Sort.by(new Sort.Order(Sort.Direction.fromString(sortParams[1]), sortParams[0]));
         Pageable pageable = PageRequest.of(page, size, sortOrder);
         SearchHistoryResDTO result = historyService.search(searchHistoryReq, pageable);
+        return ApiResponse.<SearchHistoryResDTO>builder()
+                .code(200)
+                .result(result)
+                .build();
+    }
+
+    @GetMapping("/adminSearch")
+    public ApiResponse<SearchHistoryResDTO> searchAdminHistory(
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate,
+            @RequestBody SearchAdminDto searchAdminDto) {
+
+        // Validate the endDate parameter
+        if (endDate != null && endDate.isBefore(startDate)) {
+            throw new IllegalArgumentException("End date cannot be before start date.");
+        }
+
+        Pageable pageable = PageRequest.of(page, size);
+        SearchHistoryResDTO result = historyService.searchAdmin(searchAdminDto, pageable, startDate, endDate);
+
         return ApiResponse.<SearchHistoryResDTO>builder()
                 .code(200)
                 .result(result)

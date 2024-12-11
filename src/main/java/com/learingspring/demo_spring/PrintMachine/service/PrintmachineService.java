@@ -480,6 +480,7 @@ public class PrintmachineService {
                 a2paperStatus, a3paperStatus, a4paperStatus, a5paperStatus,
                 printWaiting, machineId
         );
+        //History here
     }
 
     private void checkAndAllocateResources(PrintmachineCreationRequest request,String Id) {

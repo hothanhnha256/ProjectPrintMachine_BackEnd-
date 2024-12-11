@@ -4,6 +4,7 @@ import com.learingspring.demo_spring.File.entity.File;
 import com.learingspring.demo_spring.History.dto.reponse.HistoryDTO;
 import com.learingspring.demo_spring.History.dto.reponse.SearchHistoryResDTO;
 import com.learingspring.demo_spring.History.dto.request.CreateHistoryDTO;
+import com.learingspring.demo_spring.History.dto.request.SearchAdminDto;
 import com.learingspring.demo_spring.History.dto.request.SearchHistoryReqDTO;
 import com.learingspring.demo_spring.History.entity.History;
 import com.learingspring.demo_spring.History.mapper.HistoryMapper;
@@ -18,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,22 +101,29 @@ public class HistoryService {
     }
 
     public SearchHistoryResDTO search(SearchHistoryReqDTO searchHistoryReq, Pageable pageable) {
-        String mssv = null;
-        if (searchHistoryReq.getIsMyHistory()) {
-            User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(RuntimeException::new);
-            mssv = user.getMssv();
-        } else if (searchHistoryReq.getMssv() != null) {
-            // Lấy mssv từ request nếu IsMyHistory = false
-            mssv = searchHistoryReq.getMssv();
-        }
+        User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(RuntimeException::new);
+
+
         Page<History> page = historyRepository.search(
                 pageable,
                 searchHistoryReq.getStart(),
                 searchHistoryReq.getEnd(),
                 searchHistoryReq.getFileId(),
                 searchHistoryReq.getPrinterId(),
-                mssv
+                user.getMssv()
                 );
+        SearchHistoryResDTO res = new SearchHistoryResDTO();
+        res.setData(page.getContent().stream().map(historyMapper::toDto).toList());
+        res.setTotal(page.getTotalElements());
+        res.setCurrentPage(pageable.getPageNumber());
+        res.setCurrentSize(pageable.getPageSize());
+        res.setTotalPage(page.getTotalPages());
+        return res;
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public SearchHistoryResDTO searchAdmin(SearchAdminDto searchAdminDto , Pageable pageable,LocalDate startDate,LocalDate endDate ) {
+        Page<History> page = historyRepository.search(pageable,startDate,endDate,searchAdminDto.getFileId(),searchAdminDto.getPrinterId());
         SearchHistoryResDTO res = new SearchHistoryResDTO();
         res.setData(page.getContent().stream().map(historyMapper::toDto).toList());
         res.setTotal(page.getTotalElements());
