@@ -12,6 +12,7 @@ import java.time.LocalDate;
 public class ReportWarrantyResponse {
     String id;
     String idMachine;
+    String name;
     String description;
     LocalDate createDate;
 }

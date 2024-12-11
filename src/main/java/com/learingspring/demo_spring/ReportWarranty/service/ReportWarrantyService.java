@@ -20,6 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @PreAuthorize("hasRole('ADMIN')")
 @Slf4j
@@ -32,10 +33,12 @@ public class ReportWarrantyService {
     PrintmachineRepository printmachineRepository;
 
     public ReportWarrantyResponse createReportWarranty(ReportWarrantyCreateRequest reportWarrantyCreateRequest) {
+        Optional<PrintMachine> printMachine = printmachineRepository.findById(reportWarrantyCreateRequest.getIdMachine());
         if (printmachineRepository.findById(reportWarrantyCreateRequest.getIdMachine()).isEmpty()) {
             throw new AppException(ErrorCode.PRINT_MACHINE_NOT_FOUND);
         }
         ReportWarranty reportWarranty = reportWarrantyMapper.toReportWarranty(reportWarrantyCreateRequest);
+        reportWarranty.setName(printMachine.get().getName());
         reportWarranty.setIdMachine(reportWarrantyCreateRequest.getIdMachine());
         reportWarranty.setCreateDate(LocalDate.now());
         reportWarrantyRepository.save(reportWarranty);
