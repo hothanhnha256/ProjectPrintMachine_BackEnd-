@@ -100,16 +100,16 @@ public class HistoryService {
         historyRepository.deleteById(id);
     }
 
-    public SearchHistoryResDTO search(SearchHistoryReqDTO searchHistoryReq, Pageable pageable) {
+    public SearchHistoryResDTO search(LocalDate start,LocalDate end,String fileId,String printerId, Pageable pageable) {
         User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(RuntimeException::new);
 
 
         Page<History> page = historyRepository.search(
                 pageable,
-                searchHistoryReq.getStart(),
-                searchHistoryReq.getEnd(),
-                searchHistoryReq.getFileId(),
-                searchHistoryReq.getPrinterId(),
+                start,
+                end,
+                fileId,
+                printerId,
                 user.getMssv()
                 );
         SearchHistoryResDTO res = new SearchHistoryResDTO();
@@ -122,8 +122,8 @@ public class HistoryService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public SearchHistoryResDTO searchAdmin(SearchAdminDto searchAdminDto , Pageable pageable,LocalDate startDate,LocalDate endDate ) {
-        Page<History> page = historyRepository.search(pageable,startDate,endDate,searchAdminDto.getFileId(),searchAdminDto.getPrinterId());
+    public SearchHistoryResDTO searchAdmin(String fileID, String printerId , Pageable pageable,LocalDate startDate,LocalDate endDate ) {
+        Page<History> page = historyRepository.search(pageable,startDate,endDate,fileID,printerId);
         SearchHistoryResDTO res = new SearchHistoryResDTO();
         res.setData(page.getContent().stream().map(historyMapper::toDto).toList());
         res.setTotal(page.getTotalElements());

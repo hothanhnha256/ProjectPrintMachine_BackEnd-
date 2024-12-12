@@ -50,12 +50,18 @@ public class HistoryController {
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(defaultValue = "date,DESC") String sort,
-            @RequestBody SearchHistoryReqDTO searchHistoryReq)  {
-        log.debug("REST request to search History : {}", searchHistoryReq);
+            @RequestParam(required = false) LocalDate start,
+            @RequestParam(required = false) LocalDate end,
+            @RequestParam(required = false) String fileId,
+            @RequestParam(required = false) String printerId)  {
+        if (end != null && end.isBefore(start)) {
+            throw new IllegalArgumentException("End date cannot be before start date.");
+        }
+
         String[] sortParams = sort.split(",");
         Sort sortOrder = Sort.by(new Sort.Order(Sort.Direction.fromString(sortParams[1]), sortParams[0]));
         Pageable pageable = PageRequest.of(page, size, sortOrder);
-        SearchHistoryResDTO result = historyService.search(searchHistoryReq, pageable);
+        SearchHistoryResDTO result = historyService.search(start,end,fileId,printerId, pageable);
         return ApiResponse.<SearchHistoryResDTO>builder()
                 .code(200)
                 .result(result)
@@ -68,7 +74,8 @@ public class HistoryController {
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate,
-            @RequestBody SearchAdminDto searchAdminDto) {
+            @RequestParam(required = false) String fileId,
+            @RequestParam(required = false) String printerId) {
 
         // Validate the endDate parameter
         if (endDate != null && endDate.isBefore(startDate)) {
@@ -76,7 +83,7 @@ public class HistoryController {
         }
 
         Pageable pageable = PageRequest.of(page, size);
-        SearchHistoryResDTO result = historyService.searchAdmin(searchAdminDto, pageable, startDate, endDate);
+        SearchHistoryResDTO result = historyService.searchAdmin(fileId,printerId, pageable, startDate, endDate);
 
         return ApiResponse.<SearchHistoryResDTO>builder()
                 .code(200)
