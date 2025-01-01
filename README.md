@@ -4,7 +4,7 @@
 
 First, you need clone this project
 
-Second, you must have an Interface to test
+Second, you must have an interface to test. Ex: your FE, Postman,...
 
 Third, follow this docs to use: https://docs.google.com/document/d/1Pm7d4N8qZBKND6mP3TeHygPSPBl71VqcYs9V1PmLrCM/edit?tab=t.2c3wz7tqumdv
 
