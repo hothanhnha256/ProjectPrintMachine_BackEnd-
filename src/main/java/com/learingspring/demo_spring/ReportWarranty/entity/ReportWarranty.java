@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ReportWarranty {
+public class    ReportWarranty {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;

@@ -70,7 +70,6 @@ public class UserService {
         }
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-
         user.setRole(Roles.ADMIN);
 
         try {

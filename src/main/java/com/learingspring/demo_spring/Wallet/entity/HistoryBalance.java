@@ -21,7 +21,7 @@ public class HistoryBalance {
     String id;
 
     @ManyToOne
-    @JoinColumn(name = "wallet_id")
+    @JoinColumn(name = "wallet_id",nullable = false)
     Wallet wallet;
 
     @Column(name = "balance")
